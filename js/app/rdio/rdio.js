@@ -1,12 +1,12 @@
 (function(){
 	MoveToSpotify.directive('rdio', Rdio);
 	
-	Rdio.$inject = ['$log'];
+	Rdio.$inject = ['rdioService', '$log'];
 	
-	function Rdio($log){
+	function Rdio(Service, $log){
 		
 		function controller($scope){
-			$log.debug('rdio up');
+			Service.getAuth();
 		}
 		
 		return {
