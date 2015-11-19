@@ -4,13 +4,11 @@
 	Service.$inject = ['$http', '$q', '$log'];
 	
 	function Service($http, $q, $log){
-		var CLIENT_ID = SPOTIFY_CLIENT_ID;
-		var CLIENT_SECRET = SPOTIFY_CLIENT_SECRET;
-		var REDIRECT_URI = "http://move.152.io";
+		// https://developer.spotify.com/my-applications/#!/applications/2c2bff3442994bba939ef3fd04e0efce
+		var CLIENT_ID = "2c2bff3442994bba939ef3fd04e0efce";
+		var REDIRECT_URI = "http://move.152.io?done=spotify";
 		
 		this.getAuth = function(){
-			$log.debug(CLIENT_ID);
-			$log.debug(CLIENT_SECRET);
 		}
 	}
 })();

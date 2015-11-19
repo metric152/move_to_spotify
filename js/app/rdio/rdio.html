@@ -1,1 +1,2 @@
-<h1>Hello rdio</h1>
+<button ng-click="rdio.goToRdio()" ng-if="!rdio.getLibrary">Connect to Rdio</button>
+<button ng-click="rdio.getAlbums()" ng-if="rdio.getLibrary">Get Rdio Albums</button>
