@@ -1,5 +1,26 @@
 #rdio-library {
 	overflow: auto;
-	width: 500px;
+	width: 800px;
 	height: 300px;
+}
+
+#rdio-library li{
+	float: left;
+	width: 250px;
+	padding-bottom: 10px;
+	padding-right: 10px;
+}
+
+#rdio-library li div.album-art{
+	
+}
+
+#rdio-library li div.album-name{
+	font-weight: bold;
+	font-size: 0.9em;
+}
+
+#rdio-library li div.artist{
+	color: silver;
+	font-size: 0.8em;
 }
