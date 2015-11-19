@@ -10,6 +10,16 @@
 			Service.redirectToRdio();
 		}
 		
+		// Get the list of albums
+		function getAlbums(){
+			Service.getAlbums().then(function(result){
+				$log.debug(result);
+			}.bind(this), 
+			function(result){
+				$log.debug(result);
+			}.bind(this));
+		}
+		
 		// Check to see if we've made a connection to rdio
 		function checkStatus(){
 			Service.checkStatus().then(function(){
@@ -25,6 +35,7 @@
 		function controller($scope){
 			this.checkStatus = checkStatus;
 			this.goToRdio = goToRdio;
+			this.getAlbums = getAlbums;
 			this.getLibrary = false;
 			
 			this.checkStatus();

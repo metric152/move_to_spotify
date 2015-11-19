@@ -9,10 +9,27 @@
 		var REDIRECT_URI = "http://move.152.io?rdio=done";
 		
 		var OAUTH_URI = "https://www.rdio.com/oauth2/authorize";
-		var TOKEN_URI = "https://services.rdio.com/oauth2/token";
 		var ENDPOINT_URI = "https://services.rdio.com/api/1/";
 		
 		var TOKEN = 'token';
+		
+		// This will return the raw token
+		this.getToken = function(){
+			var result = localStorage.getItem(TOKEN);
+			if(!result) return null;
+			
+			return JSON.parse(localStorage.getItem(TOKEN));
+		}
+		
+		// This will return just the access token
+		this.getAccessToken = function(){
+			// Using the token
+			// http://www.rdio.com/developers/docs/web-service/oauth2/overview/ref-oauth2-access-token
+			var result = this.getToken();
+			if(!result) return null;
+			
+			return result.access_token;
+		}
 		
 		// Redirect to the auto page
 		this.redirectToRdio = function(){
@@ -24,9 +41,20 @@
 			});
 		}
 		
-		// Get the token for requests
-		this.getToken = function(){
-			return localStorage.getItem(JSON.parse(TOKEN));
+		// Go get the albums
+		this.getAlbums = function(){
+			// All requests are POST
+			// http://www.rdio.com/developers/docs/web-service/overview/
+			var deferred = $q.defer();
+			var data = {'sort': 'dateAdded', 'access_token': this.getAccessToken()};
+			
+			$http.post(ENDPOINT_URI + 'getAlbumsInCollection', data).then( function(result){
+				$log.debug(result);
+			}.bind(this), function(result){
+				$log.debug(result);
+			}.bind(this));
+			
+			return deferred.promise;
 		}
 		
 		// Check to see if we have a connection to rdio
@@ -57,7 +85,7 @@
 			// Go get the token
 			$http.post('api.php',{'client': 'rdio', 'redirectUri': REDIRECT_URI, 'clientId': CLIENT_ID, 'code': code}).then(function(result){
 				// Store the response
-				localStorage.setItem(TOKEN, JSON.toString(result.data));
+				localStorage.setItem(TOKEN, JSON.stringify(result.data));
 				
 				// Resolve the promise
 				deferred.resolve();
