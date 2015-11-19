@@ -1,1 +1,4 @@
-<h1>Hello library</h1>
+<h1>Rdio Library</h1>
+<ul id="rdio-library">
+	<li ng-repeat="album in lib.albums track by $index">{{album.artist}} - {{album.name}}</li>
+</ul>

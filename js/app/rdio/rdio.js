@@ -1,7 +1,7 @@
 (function(){
 	MoveToSpotify.directive('rdio', Rdio);
 	
-	Rdio.$inject = ['$rootScope', 'rdioService', '$log'];
+	Rdio.$inject = ['$rootScope', RDIO_SERVICE, '$log'];
 	
 	function Rdio($rootScope, Service, $log){
 		

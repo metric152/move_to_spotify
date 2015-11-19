@@ -3,12 +3,13 @@
 	
 	MoveToSpotify.directive('library', Library);
 	
-	Library.$inject = ['$log'];
+	Library.$inject = [RDIO_SERVICE, '$log'];
 	
-	function Library($log){
+	function Library(Service, $log){
 		
 		function controller($scope){
-			$log.debug('library up');
+			var result = Service.getLibrary();
+			this.albums = result.albums;
 		}
 		
 		return {
@@ -16,7 +17,7 @@
 			'restrict':'E',
 			'scope':{},
 			'controller':['$scope', controller],
-			'controllerAs': 'library',
+			'controllerAs': 'lib',
 			'bindToController': true
 		} 
 	} 

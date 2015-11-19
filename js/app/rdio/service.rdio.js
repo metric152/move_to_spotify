@@ -1,5 +1,6 @@
 (function(){
-	MoveToSpotify.service('rdioService', Service);
+	RDIO_SERVICE = 'rdioService';
+	MoveToSpotify.service(RDIO_SERVICE, Service);
 	
 	Service.$inject = ['$http', '$q', '$location', '$window', '$httpParamSerializer', '$timeout', '$log'];
 	
@@ -67,6 +68,16 @@
 			var result = localStorage.getItem(FINISHED);
 			
 			return (result && result === "true");
+		}
+		
+		// Get the library
+		this.getLibrary = function(){
+			var lib = null;
+			if(localStorage.getItem(LIBRARY)){
+				lib = JSON.parse(localStorage.getItem(LIBRARY));
+			}
+			
+			return lib;
 		}
 		
 		// Go get the albums
