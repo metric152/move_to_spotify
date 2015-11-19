@@ -37,7 +37,8 @@
 				'response_type': 'code',
 				'client_id': CLIENT_ID,
 				'redirect_uri': REDIRECT_URI,
-				'hideSignup': true
+				'hideSignup': true,
+				'showSignup': false
 			});
 		}
 		
@@ -46,9 +47,16 @@
 			// All requests are POST
 			// http://www.rdio.com/developers/docs/web-service/overview/
 			var deferred = $q.defer();
-			var data = {'sort': 'dateAdded', 'access_token': this.getAccessToken()};
+			var data = $httpParamSerializer({'sort': 'dateAdded', 'method': 'getAlbumsInCollection'});
+			var params = {
+				'headers': {
+					'content-type': undefined,
+					'x-rdio-client-id': CLIENT_ID,
+					'Authorization': 'Bearer ' + this.getAccessToken()
+				}
+			};
 			
-			$http.post(ENDPOINT_URI + 'getAlbumsInCollection', data).then( function(result){
+			$http.post(ENDPOINT_URI + 'getAlbumsInCollection', data, params).then( function(result){
 				$log.debug(result);
 			}.bind(this), function(result){
 				$log.debug(result);
