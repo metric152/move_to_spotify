@@ -1,4 +1,6 @@
 (function(){
+	LIBRARY_REFRESH = 'library-refresh';
+	
 	MoveToSpotify.directive('library', Library);
 	
 	Library.$inject = ['$log'];

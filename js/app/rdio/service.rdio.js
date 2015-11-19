@@ -1,9 +1,9 @@
 (function(){
 	MoveToSpotify.service('rdioService', Service);
 	
-	Service.$inject = ['$http', '$q', '$location', '$window', '$httpParamSerializer', '$log'];
+	Service.$inject = ['$http', '$q', '$location', '$window', '$httpParamSerializer', '$timeout', '$log'];
 	
-	function Service($http, $q, $location, $window, $httpParamSerializer, $log){
+	function Service($http, $q, $location, $window, $httpParamSerializer, $timeout, $log){
 		// http://www.rdio.com/developers/app/gml3vqymtzeuzcb77nakopz6hu/
 		var CLIENT_ID = "gml3vqymtzeuzcb77nakopz6hu";
 		var REDIRECT_URI = "http://move.152.io?rdio=done";
@@ -12,6 +12,8 @@
 		var ENDPOINT_URI = "https://services.rdio.com/api/1/";
 		
 		var TOKEN = 'token';
+		var LIBRARY = 'library';
+		var FINISHED = 'rdio_finished';
 		
 		// This will return the raw token
 		this.getToken = function(){
@@ -42,25 +44,80 @@
 			});
 		}
 		
+		// Add the albums to your library
+		function addToLibrary(albums){
+			var lib = {'total': 0, 'albums':[]};
+			
+			// Check to see if we have a lib
+			if(localStorage.getItem(LIBRARY)){
+				lib = JSON.parse(localStorage.getItem(LIBRARY));
+			}
+			
+			// Update the total
+			lib.total += albums.length;
+			// Append the albums
+			lib.albums = lib.albums.concat(albums);
+			
+			// Store the results
+			localStorage.setItem(LIBRARY, JSON.stringify(lib));
+		}
+		
+		// Check to see if the library is avaliable
+		this.isLibraryAvaliable = function(){
+			var result = localStorage.getItem(FINISHED);
+			
+			return (result && result === "true");
+		}
+		
 		// Go get the albums
-		this.getAlbums = function(){
+		this.getAlbums = function(reset){
+			var size = 300;
+			var offset = 0;
+			var deferred = $q.defer();
+			reset = (typeof reset === "boolean") ? reset : false;
+			
+			// Clear out the library
+			if(reset){
+				localStorage.removeItem(LIBRARY);
+			}
+			
 			// All requests are POST
 			// http://www.rdio.com/developers/docs/web-service/overview/
-			var deferred = $q.defer();
-			var data = $httpParamSerializer({'sort': 'dateAdded', 'method': 'getAlbumsInCollection'});
-			var params = {
-				'headers': {
-					'content-type': undefined,
-					'x-rdio-client-id': CLIENT_ID,
-					'Authorization': 'Bearer ' + this.getAccessToken()
-				}
-			};
+			function getAlbums(off, sz){
+				var data = $httpParamSerializer({'method': 'getAlbumsInCollection', 'start': off, 'count': sz, 'sort': 'dateAdded'});
+				var params = {
+					'headers': {
+						'content-type': undefined,
+						'x-rdio-client-id': CLIENT_ID,
+						'Authorization': 'Bearer ' + this.getAccessToken()
+					}
+				};
+				
+				// Go get the albums
+				$http.post(ENDPOINT_URI + 'getAlbumsInCollection', data, params).then( function(response){
+					$log.debug(response);
+					var albums = response.data.result;
+					
+					addToLibrary(albums);
+					
+					// Check to see if we need to run again
+					if(albums.length == sz){
+						// So we don't get throttled 
+						$timeout(function(){
+							getAlbums.call(this, off + size, sz);
+						}.bind(this), 1000);
+					}
+					else{
+						localStorage.setItem(FINISHED, "true");
+						deferred.resolve();
+					}
+					
+				}.bind(this), function(response){
+					$log.debug(result);
+				}.bind(this));
+			}
 			
-			$http.post(ENDPOINT_URI + 'getAlbumsInCollection', data, params).then( function(result){
-				$log.debug(result);
-			}.bind(this), function(result){
-				$log.debug(result);
-			}.bind(this));
+			getAlbums.call(this, offset, size);
 			
 			return deferred.promise;
 		}
