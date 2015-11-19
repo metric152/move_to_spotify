@@ -26,7 +26,7 @@
 		
 		// Get the token for requests
 		this.getToken = function(){
-			return localStorage.getItem(TOKEN);
+			return localStorage.getItem(JSON.parse(TOKEN));
 		}
 		
 		// Check to see if we have a connection to rdio
@@ -55,9 +55,9 @@
 			}
 			
 			// Go get the token
-			$http.post('api.php',{'client': 'rdio', 'redirectUri': REDIRECT_URI, 'code': code}).then(function(result){
-				// This should be the token
-				localStorage.setItem(TOKEN, result['token']);
+			$http.post('api.php',{'client': 'rdio', 'redirectUri': REDIRECT_URI, 'clientId': CLIENT_ID, 'code': code}).then(function(result){
+				// Store the response
+				localStorage.setItem(TOKEN, JSON.toString(result.data));
 				
 				// Resolve the promise
 				deferred.resolve();

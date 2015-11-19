@@ -6,6 +6,7 @@ define("SPOTIFY_CLIENT_SECRET", "spotify secret");
 define("SPOTIFY_TOKEN_URI", "https://accounts.spotify.com/api/token");
 
 // Pull in JSON
+// http://stackoverflow.com/questions/19254029/angularjs-http-post-does-not-send-data
 $params = json_decode(file_get_contents('php://input'),true);
 
 // Use this for 4XX responses
@@ -23,7 +24,7 @@ function setSuccessHeader($message){
 }
 
 // Go get the rdio token
-function getRdioToken($redirectUri, $code){
+function getRdioToken($redirectUri, $clientId, $code){
 	$ch = curl_init();
 	$result = null;
 	$error = false;
@@ -31,8 +32,9 @@ function getRdioToken($redirectUri, $code){
 	// Set POST URI
 	curl_setopt($ch, CURLOPT_URL, RDIO_TOKEN_URI);
 	// Set auth
+	// http://www.rdio.com/developers/docs/web-service/oauth2/overview/ref-oauth2-client-verification
 	curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-	curl_setopt($ch, CURLOPT_USERPWD, RDIO_CLIENT_SECRET);
+	curl_setopt($ch, CURLOPT_USERPWD, $clientId.':'.RDIO_CLIENT_SECRET);
 	// Set Content-Type
 	curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
 	// Capture the json data
@@ -72,7 +74,7 @@ function getSpotifyToken($code){
 // Figure out what we need to do
 switch($params['client']){
 	case 'rdio':
-		return getRdioToken($params['redirectUri'],$params['code']);
+		return getRdioToken($params['redirectUri'], $params['clientId'], $params['code']);
 	case 'spotify':
 		return getSpotifyToken($params['code']);
 	default:
