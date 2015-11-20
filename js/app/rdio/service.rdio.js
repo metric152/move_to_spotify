@@ -76,6 +76,11 @@
 			return (result && result === "true");
 		}
 		
+		// Upate song
+		this.updateLibrary = function(song, index){
+			
+		}
+		
 		// Get the library
 		this.getLibrary = function(){
 			var lib = null;
