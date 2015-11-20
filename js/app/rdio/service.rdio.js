@@ -82,7 +82,7 @@
 		
 		// Go get the albums
 		this.getAlbums = function(reset){
-			var size = 300;
+			var size = 307; // Make the number prime
 			var offset = 0;
 			var deferred = $q.defer();
 			reset = (typeof reset === "boolean") ? reset : false;

@@ -38,9 +38,6 @@
 				// Check to see if we have a library
 				if(Service.isLibraryAvaliable()){
 					this.getAgain = true;
-					
-					// Update the library listing
-					$rootScope.$broadcast(LIBRARY_REFRESH);
 				}
 				// Allow the user to get their album library
 				else{
