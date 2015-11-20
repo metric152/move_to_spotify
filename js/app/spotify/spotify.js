@@ -12,7 +12,11 @@
 		
 		// Search for albums
 		function searchSpotify(){
-			Service.searchForAlbums().then();
+			Service.searchForAlbums().then(function(){
+				
+			}.bind(this), function(){
+				alert('There was an error searching for albums');
+			}.bind(this));
 		}
 		
 		// Check to see if we're ready

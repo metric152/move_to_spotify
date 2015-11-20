@@ -64,6 +64,13 @@
 			return deferred.promise;
 		}
 		
+		// Get the auth header for a request
+		this.getAuthHeader = function(){
+			return {
+				'Authorization': 'Bearer ' + this.getAccessToken()
+			};
+		}
+		
 		// Search for albums
 		this.searchForAlbums = function(){
 			var deferred = $q.defer();
@@ -75,14 +82,17 @@
 						'type':'album',
 						'q': sprintf('album:%s artist:%s', album, artist)
 					},
-					'headers':{
-						'Authorization': 'Bearer ' + this.getAccessToken()
-					}
+					'headers': this.getAuthHeader()
 				};
 				
 				// Search for the album
 				$http.get(ENDPOINT_URI + 'v1/search', params).then(function(response){
 					$log.debug(response);
+					var album = response.data.albums.items.pop();
+					
+					// Save the album
+					return $http.put(ENDPOINT_URI + 'v1/me/albums', [album.id], {'headers': this.getAuthHeader()});
+					
 				}.bind(this), function(response){
 					$log.debug(response);
 					
@@ -95,7 +105,18 @@
 							deferred.reject();
 						}.bind(this));
 					}
+				}.bind(this))
+				.then(function(response){
+					$log.debug(response);
+				}.bind(this), function(response){
+					$log.debug(response);
 				}.bind(this));
+			}
+			
+			// If we have no library just stop
+			if(!library) {
+				deferred.reject();
+				return;
 			}
 			
 			search.call(this, library['albums'][0]['artist'], library['albums'][0]['name']);
