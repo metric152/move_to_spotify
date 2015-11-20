@@ -107,7 +107,7 @@
 			// All requests are POST
 			// http://www.rdio.com/developers/docs/web-service/overview/
 			function getAlbums(off, sz){
-				var data = $httpParamSerializer({'method': 'getAlbumsInCollection', 'start': off, 'count': sz, 'sort': 'dateAdded'});
+				var data = $httpParamSerializer({'method': 'getAlbumsInCollection', 'start': off, 'count': sz, 'sort': 'dateAdded', 'extras':'-*,name,artist,icon,album'});
 				var params = {
 					'headers': {
 						'content-type': undefined,
