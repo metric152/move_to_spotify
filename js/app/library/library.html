@@ -1,4 +1,5 @@
-<h1>Rdio Library: Albums ({{lib.count}})</h1>
+<h1 class="heading">Rdio Library</h1>
+<h4 class="detail">Albums ({{lib.count}})</h4>
 <div id="rdio-library">
 	<div class="album" ng-class="{'added': album.added}" ng-repeat="album in lib.albums track by $index">
 		<div class="album-art"><img alt="{{album.name}} - {{album.artist}}" class="b-lazy" data-blazy="{{album.icon}}" /></div>

@@ -2,6 +2,14 @@ body {
 	font-family: arial;
 }
 
+h1.heading{
+	margin-bottom: 0;
+}
+
+h4.detail {
+	margin-top: 0;
+}
+
 #rdio-library {
 	overflow: auto;
 	width: 1050px;
