@@ -1,9 +1,9 @@
 (function(){
 	MoveToSpotify.service(RDIO_SERVICE, Service);
 	
-	Service.$inject = ['$rootScope', '$http', '$q', '$location', '$window', '$httpParamSerializer', '$timeout', '$log'];
+	Service.$inject = ['$rootScope', '$http', '$q', '$location', '$window', '$httpParamSerializer', '$timeout', 'localStorageService', '$log'];
 	
-	function Service($rootScope, $http, $q, $location, $window, $httpParamSerializer, $timeout, $log){
+	function Service($rootScope, $http, $q, $location, $window, $httpParamSerializer, $timeout, localStorageService, $log){
 		// http://www.rdio.com/developers/app/gml3vqymtzeuzcb77nakopz6hu/
 		var CLIENT_ID = "gml3vqymtzeuzcb77nakopz6hu";
 		
@@ -19,15 +19,15 @@
 		// Set the raw token
 		this.setToken = function(token){
 			// Store the response
-			localStorage.setItem(TOKEN, JSON.stringify(token));
+			localStorageService.set(TOKEN, token);
 		}
 		
 		// This will return the raw token
 		this.getToken = function(){
-			var result = localStorage.getItem(TOKEN);
+			var result = localStorageService.get(TOKEN);
 			if(!result) return null;
 			
-			return JSON.parse(localStorage.getItem(TOKEN));
+			return result;
 		}
 		
 		// This will return just the access token
@@ -46,7 +46,7 @@
 				'response_type': 'code',
 				'client_id': CLIENT_ID,
 				'redirect_uri': REDIRECT_URI,
-				'scope': 'rdio',
+				'state': 'rdio',
 				'hideSignup': true,
 				'showSignup': false
 			});
@@ -57,8 +57,8 @@
 			var lib = {'total': 0, 'albums':[]};
 			
 			// Check to see if we have a lib
-			if(localStorage.getItem(LIBRARY)){
-				lib = JSON.parse(localStorage.getItem(LIBRARY));
+			if(localStorageService.get(LIBRARY)){
+				lib = localStorageService.get(LIBRARY);
 			}
 			
 			// Update the total
@@ -67,14 +67,14 @@
 			lib.albums = lib.albums.concat(albums);
 			
 			// Store the results
-			localStorage.setItem(LIBRARY, JSON.stringify(lib));
+			localStorageService.set(LIBRARY, lib);
 		}
 		
 		// Check to see if the library is avaliable
 		this.isLibraryAvaliable = function(){
-			var result = localStorage.getItem(FINISHED);
+			var result = localStorageService.get(FINISHED);
 			
-			return (result && result === "true");
+			return (result && result === true);
 		}
 		
 		// Upate song
@@ -85,8 +85,8 @@
 		// Get the library
 		this.getLibrary = function(){
 			var lib = null;
-			if(localStorage.getItem(LIBRARY)){
-				lib = JSON.parse(localStorage.getItem(LIBRARY));
+			if(localStorageService.get(LIBRARY)){
+				lib = localStorageService.get(LIBRARY);
 			}
 			
 			return lib;
@@ -101,7 +101,7 @@
 			
 			// Clear out the library
 			if(reset){
-				localStorage.removeItem(LIBRARY);
+				localStorageService.remove(LIBRARY);
 			}
 			
 			// All requests are POST
@@ -133,7 +133,7 @@
 						}.bind(this), 1000);
 					}
 					else{
-						localStorage.setItem(FINISHED, "true");
+						localStorageService.set(FINISHED, true);
 						deferred.resolve();
 					}
 					
@@ -197,9 +197,10 @@
 			results = $location.search();
 			
 			// Check to see if we have the code
-			if(results['scope'] && results['scope'] === 'rdio'){
+			if(results['state'] && results['state'] === 'rdio'){
 				code = results['code'];
 				// TODO Clean the code and the scope from the URI
+				$location.url('');
 			}
 			else{
 				deferred.reject();

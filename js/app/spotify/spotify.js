@@ -1,12 +1,12 @@
 (function(){
 	MoveToSpotify.directive('spotify', Spotify);
 	
-	Spotify.$inject = ['spotifyService', '$log'];
+	Spotify.$inject = [SPOTIFY_SERVICE, '$log'];
 	
 	function Spotify(Service, $log){
 		
 		function controller($scope){
-			Service.getAuth();
+			Service.checkStatus();
 		}
 		
 		return {

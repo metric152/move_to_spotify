@@ -1,6 +1,7 @@
 (function(){
 	// Services
 	RDIO_SERVICE = 'rdioService';
+	SPOTIFY_SERVICE = 'spotifyService';
 	
 	// Events
 	LIBRARY_REFRESH = 'library-refresh';

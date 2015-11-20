@@ -1,5 +1,5 @@
 (function(){
-	MoveToSpotify.service('spotifyService', Service);
+	MoveToSpotify.service(SPOTIFY_SERVICE, Service);
 	
 	Service.$inject = ['$rootScope', '$http', '$q', '$location', '$window', '$timeout', '$log'];
 	
