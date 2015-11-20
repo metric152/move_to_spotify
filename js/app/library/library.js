@@ -9,6 +9,7 @@
 			var result = Service.getLibrary();
 			if(result){
 				this.albums = result.albums;
+				this.count = result.total;
 			}
 			
 			$timeout(function(){
@@ -24,6 +25,7 @@
 		function controller($scope){
 			this.updateDisplay = updateDisplay;
 			this.albums = [];
+			this.count = 0;
 			
 			this.updateDisplay();
 			

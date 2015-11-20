@@ -1,9 +1,9 @@
 (function(){
 	MoveToSpotify.directive('rdio', Rdio);
 	
-	Rdio.$inject = ['$rootScope', RDIO_SERVICE, '$log'];
+	Rdio.$inject = [RDIO_SERVICE, '$log'];
 	
-	function Rdio($rootScope, Service, $log){
+	function Rdio(Service, $log){
 		
 		// Go get the code
 		function goToRdio(){
@@ -23,8 +23,6 @@
 				this.connect = false;
 				this.getAgain = true;
 				
-				// Update the library listing
-				$rootScope.$broadcast(LIBRARY_REFRESH);
 			}.bind(this))['finally']( function(){
 				$event.target.disabled = false;
 				$event.target.innerText = this.GET_RDIO_LIB;

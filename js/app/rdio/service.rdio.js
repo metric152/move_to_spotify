@@ -1,9 +1,9 @@
 (function(){
 	MoveToSpotify.service(RDIO_SERVICE, Service);
 	
-	Service.$inject = ['$http', '$q', '$location', '$window', '$httpParamSerializer', '$timeout', '$log'];
+	Service.$inject = ['$rootScope', '$http', '$q', '$location', '$window', '$httpParamSerializer', '$timeout', '$log'];
 	
-	function Service($http, $q, $location, $window, $httpParamSerializer, $timeout, $log){
+	function Service($rootScope, $http, $q, $location, $window, $httpParamSerializer, $timeout, $log){
 		// http://www.rdio.com/developers/app/gml3vqymtzeuzcb77nakopz6hu/
 		var CLIENT_ID = "gml3vqymtzeuzcb77nakopz6hu";
 		var REDIRECT_URI = "http://move.152.io?rdio=done";
@@ -120,6 +120,8 @@
 					var albums = response.data.result;
 					
 					addToLibrary(albums);
+					// Update the library listing
+					$rootScope.$broadcast(LIBRARY_REFRESH);
 					
 					// Check to see if we need to run again
 					if(albums.length == sz){
