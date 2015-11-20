@@ -195,7 +195,7 @@
 			results = $location.search();
 			
 			// Check to see if we have the code
-			if(results['state'] && results['state'] === 'rdio'){
+			if(results['state'] && results['state'] === 'rdio' && results['code']){
 				code = results['code'];
 				// Clean the code and the scope from the URI
 				$location.url('');

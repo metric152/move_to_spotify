@@ -41,7 +41,8 @@
 				'response_type': 'code',
 				'client_id': CLIENT_ID,
 				'redirect_uri': REDIRECT_URI,
-				'state': 'spotify'
+				'state': 'spotify',
+				'scope': 'user-library-modify playlist-modify-public playlist-modify-private'
 			});
 		}
 		
@@ -79,6 +80,7 @@
 					}
 				};
 				
+				// Search for the album
 				$http.get(ENDPOINT_URI + 'v1/search', params).then(function(response){
 					$log.debug(response);
 				}.bind(this), function(response){
@@ -118,7 +120,7 @@
 			results = $location.search();
 			
 			// Check to see if we have the code
-			if(results['state'] && results['state'] === 'spotify'){
+			if(results['state'] && results['state'] === 'spotify' && results['code']){
 				code = results['code'];
 				// Clean the code and the scope from the URI
 				$location.url('');
