@@ -30,10 +30,9 @@ function setSuccessHeader($message){
  * @return unknown
  */
 function setUpRdioCurl($clientId, $data){
-    $ch = curl_init();
+    // Set the URI during init
+	$ch = curl_init(RDIO_TOKEN_URI);
     
-    // Set POST URI
-    curl_setopt($ch, CURLOPT_URL, RDIO_TOKEN_URI);
     // Set auth
     // http://www.rdio.com/developers/docs/web-service/oauth2/overview/ref-oauth2-client-verification
     curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
@@ -108,9 +107,62 @@ function getRdioRefreshToken($clientId, $refreshToken){
     return setSuccessHeader($result);
 }
 
-// Go get the spotify token
-function getSpotifyToken($code){
+/**
+ * Set up curl request
+ * @param unknown $clientId
+ * @param unknown $data
+ */
+function setUpSpotifyCurl($clientId, $data){
+	// Set the URI during init
+	$ch = curl_init(SPOTIFY_TOKEN_URI);
 	
+	// Set auth
+	// https://developer.spotify.com/web-api/authorization-guide/
+	curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+	curl_setopt($ch, CURLOPT_USERPWD, $clientId.':'.SPOTIFY_CLIENT_SECRET);
+	// Set Content-Type
+	curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+	// Capture the json data
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	// Allow the header to be dumped
+	curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+	
+	// Set POST Data
+	curl_setopt($ch, CURLOPT_POST, true);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+	
+	return $ch;
+}
+
+// Go get the spotify token
+/**
+ * Get a token from spotify
+ * @param unknown $redirectUri
+ * @param unknown $clientId
+ * @param unknown $code
+ */
+function getSpotifyToken($redirectUri, $clientId, $code){
+	$result = null;
+	$error = false;
+	$ch = setUpSpotifyCurl($clientId, [
+			'grant_type' => 'authorization_code',
+			'code' => $code,
+			'redirect_uri' => $redirectUri
+	]);
+	
+	// Run query
+	$result = curl_exec($ch);
+	
+	// Something failed during the request
+	if(curl_getinfo($ch, CURLINFO_HTTP_CODE) >= 400){
+		$error = true;
+	}
+	curl_close($ch);
+	
+	if($error) return setErrorHeader($result);
+	
+	// Return our token data
+	return setSuccessHeader($result);
 }
 
 
@@ -125,6 +177,12 @@ switch($params['client']){
 	    }
 		
 	case 'spotify':
+		if($params['task'] == 'refresh_token'){
+			
+		}
+		elseif($params['task'] == 'token'){
+			return getSpotifyToken($params['redirectUri'], $params['clientId'], $params['code']);
+		}
 		return getSpotifyToken($params['code']);
 	default:
 		return setErrorHeader(json_encode(['error' => 'No client set']));

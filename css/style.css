@@ -14,6 +14,7 @@ h4.detail {
 	overflow: auto;
 	width: 1100px;
 	height: 400px;
+	margin-bottom: 10px;
 }
 
 #rdio-library .album{

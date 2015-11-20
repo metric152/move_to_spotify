@@ -14,8 +14,6 @@
 		var LIBRARY = 'library';
 		var FINISHED = 'rdio_finished';
 		
-		// TODO Install angular-storage: https://github.com/grevory/angular-local-storage
-		
 		// Set the raw token
 		this.setToken = function(token){
 			// Store the response
@@ -199,7 +197,7 @@
 			// Check to see if we have the code
 			if(results['state'] && results['state'] === 'rdio'){
 				code = results['code'];
-				// TODO Clean the code and the scope from the URI
+				// Clean the code and the scope from the URI
 				$location.url('');
 			}
 			else{
