@@ -6,14 +6,15 @@
 	function Service($rootScope, $http, $q, $location, $window, $httpParamSerializer, $timeout, $log){
 		// http://www.rdio.com/developers/app/gml3vqymtzeuzcb77nakopz6hu/
 		var CLIENT_ID = "gml3vqymtzeuzcb77nakopz6hu";
-		var REDIRECT_URI = "http://move.152.io?rdio=done";
 		
 		var OAUTH_URI = "https://www.rdio.com/oauth2/authorize";
 		var ENDPOINT_URI = "https://services.rdio.com/api/1/";
 		
-		var TOKEN = 'token';
+		var TOKEN = 'rdio_token';
 		var LIBRARY = 'library';
 		var FINISHED = 'rdio_finished';
+		
+		// TODO Install angular-storage: https://github.com/grevory/angular-local-storage
 		
 		// Set the raw token
 		this.setToken = function(token){
@@ -45,6 +46,7 @@
 				'response_type': 'code',
 				'client_id': CLIENT_ID,
 				'redirect_uri': REDIRECT_URI,
+				'scope': 'rdio',
 				'hideSignup': true,
 				'showSignup': false
 			});
@@ -195,8 +197,9 @@
 			results = $location.search();
 			
 			// Check to see if we have the code
-			if(results['rdio'] && results['rdio'] === 'done'){
+			if(results['scope'] && results['scope'] === 'rdio'){
 				code = results['code'];
+				// TODO Clean the code and the scope from the URI
 			}
 			else{
 				deferred.reject();

@@ -5,6 +5,9 @@
 	// Events
 	LIBRARY_REFRESH = 'library-refresh';
 	
+	// Redirect uri
+	REDIRECT_URI = "http://move.152.io";
+	
 	MoveToSpotify.config(Configure);
 	
 	Configure.$inject = ['$locationProvider'];
