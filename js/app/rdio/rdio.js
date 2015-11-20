@@ -25,9 +25,9 @@
 				
 				// Update the library listing
 				$rootScope.$broadcast(LIBRARY_REFRESH);
-			}.bind(this), 
-			function(result){
-				$log.debug(result);
+			}.bind(this))['finally']( function(){
+				$event.target.disabled = false;
+				$event.target.innerText = this.GET_RDIO_LIB;
 			}.bind(this));
 		}
 		
@@ -58,6 +58,8 @@
 			this.connect = false;
 			this.getLibrary = false;
 			this.getAgain = false;
+			
+			this.GET_RDIO_LIB = "Get Rdio Albums";
 			
 			this.checkStatus();
 		}

@@ -9,7 +9,9 @@
 		
 		function updateDisplay(){
 			var result = Service.getLibrary();
-			this.albums = result.albums;
+			if(result){
+				this.albums = result.albums;
+			}
 			
 			$timeout(function(){
 				// Set up image lazy load
@@ -23,6 +25,7 @@
 		
 		function controller($scope){
 			this.updateDisplay = updateDisplay;
+			this.albums = [];
 			
 			this.updateDisplay();
 			

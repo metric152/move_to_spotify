@@ -1,3 +1,6 @@
+body {
+	font-family: arial;
+}
 #rdio-library {
 	overflow: auto;
 	width: 1100px;

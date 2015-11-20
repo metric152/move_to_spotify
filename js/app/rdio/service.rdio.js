@@ -16,6 +16,12 @@
 		var LIBRARY = 'library';
 		var FINISHED = 'rdio_finished';
 		
+		// Set the raw token
+		this.setToken = function(token){
+			// Store the response
+			localStorage.setItem(TOKEN, JSON.stringify(token));
+		}
+		
 		// This will return the raw token
 		this.getToken = function(){
 			var result = localStorage.getItem(TOKEN);
@@ -115,7 +121,7 @@
 					if(albums.length == sz){
 						// So we don't get throttled 
 						$timeout(function(){
-							getAlbums.call(this, off + size, sz);
+							getAlbums.call(this, off + sz, sz);
 						}.bind(this), 1000);
 					}
 					else{
@@ -124,11 +130,44 @@
 					}
 					
 				}.bind(this), function(response){
-					$log.debug(result);
+					$log.debug(response);
+					
+					// Check for a bad token error
+					// http://www.rdio.com/developers/docs/web-service/oauth2/overview/ref-using-a-refresh-token
+					if(response.data.error == "invalid_token"){
+						this.getRefreshToken().then( function(){
+							// We've got a new token. Try again
+							getAlbums.call(this, off, sz);
+						}.bind(this), function(){
+							alert('Error getting refresh token');
+							deferred.reject();
+						}.bind(this));
+					}
+					else{
+						deferred.reject();
+					}
 				}.bind(this));
 			}
 			
 			getAlbums.call(this, offset, size);
+			
+			return deferred.promise;
+		}
+		
+		// Get a refresh token
+		this.getRefreshToken = function(){
+			var deferred = $q.defer();
+			
+			// Get a new token
+			$http.post('api.php', {'client':'rdio', 'task': 'refresh_token', 'clientId':CLIENT_ID, 'refresh_token':this.getToken().refresh_token}).then( function(response){
+				$log.debug(response);
+				// Set the new token here
+				this.setToken(response.data);
+				deferred.resolve();
+			}.bind(this), function(response){
+				$log.debug(response);
+				deferred.reject();
+			});
 			
 			return deferred.promise;
 		}
@@ -159,9 +198,9 @@
 			}
 			
 			// Go get the token
-			$http.post('api.php',{'client': 'rdio', 'redirectUri': REDIRECT_URI, 'clientId': CLIENT_ID, 'code': code}).then(function(result){
+			$http.post('api.php',{'client': 'rdio', 'task':'token', 'redirectUri': REDIRECT_URI, 'clientId': CLIENT_ID, 'code': code}).then(function(result){
 				// Store the response
-				localStorage.setItem(TOKEN, JSON.stringify(result.data));
+				this.setToken(result.data);
 				
 				// Resolve the promise
 				deferred.resolve();
