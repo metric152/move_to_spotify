@@ -1,6 +1,4 @@
 (function(){
-	LIBRARY_REFRESH = 'library-refresh';
-	
 	MoveToSpotify.directive('library', Library);
 	
 	Library.$inject = ['$rootScope', RDIO_SERVICE, '$timeout','$log'];

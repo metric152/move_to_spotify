@@ -1,4 +1,10 @@
 (function(){
+	// Services
+	RDIO_SERVICE = 'rdioService';
+	
+	// Events
+	LIBRARY_REFRESH = 'library-refresh';
+	
 	MoveToSpotify.config(Configure);
 	
 	Configure.$inject = ['$locationProvider'];

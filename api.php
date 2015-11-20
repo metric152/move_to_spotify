@@ -1,9 +1,5 @@
 <?php 
-define("RDIO_CLIENT_SECRET", "rdio secret");
-define("RDIO_TOKEN_URI", "https://services.rdio.com/oauth2/token");
-
-define("SPOTIFY_CLIENT_SECRET", "spotify secret");
-define("SPOTIFY_TOKEN_URI", "https://accounts.spotify.com/api/token");
+require 'keys.php';
 
 // Pull in JSON
 // http://stackoverflow.com/questions/19254029/angularjs-http-post-does-not-send-data

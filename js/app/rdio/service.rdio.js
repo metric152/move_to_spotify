@@ -1,5 +1,4 @@
 (function(){
-	RDIO_SERVICE = 'rdioService';
 	MoveToSpotify.service(RDIO_SERVICE, Service);
 	
 	Service.$inject = ['$http', '$q', '$location', '$window', '$httpParamSerializer', '$timeout', '$log'];
