@@ -165,6 +165,34 @@ function getSpotifyToken($redirectUri, $clientId, $code){
 	return setSuccessHeader($result);
 }
 
+/**
+ * Get refresh token for spotify
+ * @param unknown $clientId
+ * @param unknown $refreshToken
+ */
+function getSpotifyRefreshToken($clientId, $refreshToken){
+	$result = null;
+	$error = false;
+	$ch = $ch = setUpSpotifyCurl($clientId, [
+			'grant_type' => 'refresh_token',
+			'refresh_token' => $refreshToken
+	]);
+	
+	// Run query
+	$result = curl_exec($ch);
+	
+	// Something failed during the request
+	if(curl_getinfo($ch, CURLINFO_HTTP_CODE) >= 400){
+		$error = true;
+	}
+	curl_close($ch);
+	
+	if($error) return setErrorHeader($result);
+	
+	// Return our token data
+	return setSuccessHeader($result);
+}
+
 
 // Figure out what we need to do
 switch($params['client']){
@@ -178,7 +206,7 @@ switch($params['client']){
 		
 	case 'spotify':
 		if($params['task'] == 'refresh_token'){
-			
+			return getSpotifyRefreshToken($params['clientId'], $params['refresh_token']);
 		}
 		elseif($params['task'] == 'token'){
 			return getSpotifyToken($params['redirectUri'], $params['clientId'], $params['code']);

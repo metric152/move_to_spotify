@@ -1,14 +1,14 @@
 (function(){
 	MoveToSpotify.service(SPOTIFY_SERVICE, Service);
 	
-	Service.$inject = ['$rootScope', '$http', '$q', '$location', '$window', '$httpParamSerializer', '$timeout', 'localStorageService', '$log'];
+	Service.$inject = ['$rootScope', '$http', '$q', '$location', '$window', '$httpParamSerializer', '$timeout', 'localStorageService', RDIO_SERVICE, '$log'];
 	
-	function Service($rootScope, $http, $q, $location, $window, $httpParamSerializer, $timeout, localStorageService, $log){
+	function Service($rootScope, $http, $q, $location, $window, $httpParamSerializer, $timeout, localStorageService, RdioService, $log){
 		// https://developer.spotify.com/my-applications/#!/applications/2c2bff3442994bba939ef3fd04e0efce
 		var CLIENT_ID = "2c2bff3442994bba939ef3fd04e0efce";
 		
 		var OAUTH_URI = "https://accounts.spotify.com/authorize";
-		var ENDPOINT_URI = "";
+		var ENDPOINT_URI = "https://api.spotify.com/";
 		
 		var TOKEN = 'spotify_token';
 		var FINISHED = 'spotify_finished';
@@ -29,6 +29,10 @@
 		// Get the access token
 		this.getAccessToken = function(){
 			// https://developer.spotify.com/web-api/authorization-guide/
+			var result = this.getToken();
+			if(!result) return null;
+			
+			return result.access_token;
 		}
 		
 		// Start the OAUTH dance
@@ -43,7 +47,58 @@
 		
 		// Get a refresh token
 		this.getRefreshToken = function(){
-
+			var deferred = $q.defer();
+			
+			// Get a new token
+			$http.post('api.php', {'client':'spotify', 'task': 'refresh_token', 'clientId':CLIENT_ID, 'refresh_token':this.getToken().refresh_token}).then( function(response){
+				var newToken = angular.merge({}, this.getToken(), response.data);
+				// Set the new token here
+				this.setToken(newToken);
+				deferred.resolve();
+			}.bind(this), function(response){
+				$log.debug(response);
+				deferred.reject();
+			});
+			
+			return deferred.promise;
+		}
+		
+		// Search for albums
+		this.searchForAlbums = function(){
+			var deferred = $q.defer();
+			var library = RdioService.getLibrary();
+			
+			function search(artist, album){
+				var params = {
+					'params':{
+						'type':'album',
+						'q': sprintf('album:%s artist:%s', album, artist)
+					},
+					'headers':{
+						'Authorization': 'Bearer ' + this.getAccessToken()
+					}
+				};
+				
+				$http.get(ENDPOINT_URI + 'v1/search', params).then(function(response){
+					$log.debug(response);
+				}.bind(this), function(response){
+					$log.debug(response);
+					
+					//  Check for expired token
+					if(response.data.error.message.indexOf("token expired") > -1){
+						this.getRefreshToken().then(function(response){
+							search.call(this, artist, album);
+						}.bind(this), function(response){
+							alert('Issue getting refresh token');
+							deferred.reject();
+						}.bind(this));
+					}
+				}.bind(this));
+			}
+			
+			search.call(this, library['albums'][0]['artist'], library['albums'][0]['name']);
+			
+			return deferred.promise;
 		}
 		
 		// Check after the redirect for a code to get a token
