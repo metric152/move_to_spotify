@@ -1,12 +1,13 @@
 #rdio-library {
 	overflow: auto;
-	width: 800px;
-	height: 300px;
+	width: 1100px;
+	height: 400px;
 }
 
 #rdio-library .album{
 	float: left;
 	width: 250px;
+	min-height: 260px;
 	padding-bottom: 10px;
 	padding-right: 10px;
 	text-align: center;
