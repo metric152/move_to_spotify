@@ -11,11 +11,21 @@
 		}
 		
 		// Search for albums
-		function searchSpotify(){
+		function searchSpotify($event){
+			// Update the button
+			$event.target.disabled = true;
+			$event.target.innerText = 'Searching Spotify. Please wait.';
+			
 			Service.searchForAlbums().then(function(){
+				// Update the button
+				$event.target.disabled = false;
+				$event.target.innerText = 'Export to Spotify Complete';
 				
-			}.bind(this), function(){
-				alert('There was an error searching for albums');
+			}.bind(this), function(message){
+				if(message) alert(message);
+				
+				$event.target.disabled = false;
+				$event.target.innerText = this.SEARCH_SPOTIFY;
 			}.bind(this));
 		}
 		
@@ -36,6 +46,8 @@
 			this.searchSpotify = searchSpotify;
 			this.connect = false;
 			this.search = false;
+			
+			this.SEARCH_SPOTIFY = "Search Spotify for Albums";
 			
 			this.checkStatus();
 		}

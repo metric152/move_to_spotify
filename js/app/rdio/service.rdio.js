@@ -81,9 +81,6 @@
 			
 			// Update the library
 			setLibrary(lib);
-			
-			// Update the library listing
-			$rootScope.$broadcast(LIBRARY_REFRESH);
 		}
 		
 		// Get the library

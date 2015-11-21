@@ -75,6 +75,14 @@
 		this.searchForAlbums = function(){
 			var deferred = $q.defer();
 			var library = RdioService.getLibrary();
+			var countDown = library.total;
+			var albums = [];
+			
+			/**
+			 * TODO 
+			 * Look through your library for artists. Search for that artist and then gather their albums.
+			 * This will help you make fewer searches.
+			 */
 			
 			function search(album, index){
 				var params = {
@@ -87,10 +95,19 @@
 				
 				// Search for the album
 				$http.get(ENDPOINT_URI + 'v1/search', params).then(function(response){
-					var album = response.data.albums.items.pop();
+					var searchResult = response.data.albums.items.pop();
 					
-					// Save the album
-					return $http.put(ENDPOINT_URI + 'v1/me/albums', [album.id], {'headers': this.getAuthHeader()});
+					// Handle not finding an album
+					// Batch your album requests to 50
+					countDown--;
+					if(searchResult){
+						albums.push(searchResult.id);
+						
+						// The album was added
+						album.added = true;
+						// Update the library
+						RdioService.updateLibrary(album, index);
+					}
 					
 				}.bind(this), function(response){
 					//  Check for expired token
@@ -102,22 +119,35 @@
 							deferred.reject();
 						}.bind(this));
 					}
-				}.bind(this))
-				.then(function(response){
-					// The album was added
-					album.added = true;
-					// Update the library
-					RdioService.updateLibrary(album, index);
-				}.bind(this), function(response){
-					// Adding the album failed
-					$log.debug(response);
+				}.bind(this))['finally'](function(){
+					if(albums.length == 50 || countDown == 0){
+						// Save the album
+						$http.put(ENDPOINT_URI + 'v1/me/albums', albums, {'headers': this.getAuthHeader()}).then(function(){
+							// Update the library
+							$rootScope.$broadcast(LIBRARY_REFRESH);
+						});
+						
+						// Reset the albums
+						albums = [];
+					}
+					
+					// Check to see if we need to check the next album
+					var nextIndex = index + 1;
+					
+					if(library['albums'][nextIndex]){
+						search.call(this, library['albums'][nextIndex], nextIndex);
+					}
+					else{
+						// Now we're done
+						deferred.resolve();
+					}
 				}.bind(this));
 			}
 			
 			// If we have no library just stop
 			if(!library) {
-				deferred.reject();
-				return;
+				deferred.reject("We don't have a library yet. Connect with Rdio and get your albums.");
+				return deferred.promise;
 			}
 			
 			search.call(this, library['albums'][0], 0);
