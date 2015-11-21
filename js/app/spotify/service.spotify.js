@@ -77,6 +77,7 @@
 			
 			// TODO Mark the album as added with album.added
 			// TODO Batch your saves to 50
+			// TODO If !album.selected skip the album
 			
 			/**
 			 * // Save the album
