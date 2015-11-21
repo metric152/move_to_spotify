@@ -1,4 +1,8 @@
-<img src="images/spotify.jpg" /><br/>
-<button ng-click="spotify.goToSpotify()" ng-if="spotify.connect">Connect to Spotify</button>
-<button ng-click="spotify.searchSpotify($event)" ng-if="spotify.search">{{spotify.SEARCH_SPOTIFY}}</button>
-<button ng-click="spotify.saveToSpotify($event)" ng-if="spotify.save">{{spotify.SAVE_SPOTIFY}}</button>
+<div>
+    <img class="logo"  src="images/spotify.jpg" /><br/>
+    <button ng-click="spotify.goToSpotify()" ng-if="spotify.connect">Connect to Spotify</button>
+    <button ng-click="spotify.searchSpotify($event)" ng-if="spotify.search">{{spotify.SEARCH_SPOTIFY}}</button>
+    <button ng-click="spotify.saveToSpotify($event)" ng-if="spotify.save" ng-disabled="spotify.isSaveDisabled()">{{spotify.SAVE_SPOTIFY}}</button>
+    <h4 class="detail" ng-class="{'warn': spotify.warn}">Albums ({{spotify.albumCount}})</h4>
+    <h4 class="detail" ng-class="{'warn': spotify.warn}">Tracks ({{spotify.trackCount}})</h4>
+</div>

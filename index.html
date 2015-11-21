@@ -20,8 +20,20 @@
 		<script src="js/app/library/library.js"></script>
 	</head>
 	<body ng-app="MoveToSpotify">
-		<rdio></rdio>
-		<library></library>
-		<spotify></spotify>
+        <div id="apps">
+            <rdio id="rdio"></rdio>
+            <spotify id="spotify"></spotify>
+            <div id="notes">
+                <ol>
+                    <li>Connect to Rdio</li>
+                    <li>Get your library from Rdio</li>
+                    <li>Connect to Spotify</li>
+                    <li>Search Spotify for album matches</li>
+                    <li>Save albums to Spotify</li>
+                </ol>
+                <b>Spotify has a hard limit of 10,000 songs through importing. Save will be disabled until there are 10,000 songs of fewer.</b>
+            </div>
+        </div>
+        <library></library>
 	</body>
 </html>

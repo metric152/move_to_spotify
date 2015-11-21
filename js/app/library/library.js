@@ -9,12 +9,6 @@
 			var result = Service.getLibrary();
 			if(result){
 				this.albums = result.albums;
-				this.albumCount = result.total;
-				
-				// Get track count
-				this.albums.forEach( function(album, index){
-					this.trackCount += album.length;
-				}.bind(this));
 			}
 			
 			$timeout(function(){
@@ -37,6 +31,9 @@
 			}
 			// Update the library
 			Service.updateLibrary(album, $index);
+			
+			// Update spotify count
+			$rootScope.$broadcast(SPOTIFY_REFRESH);
 		}
 		
 		// Figure out if the album should be selected
@@ -49,8 +46,6 @@
 			this.include = include;
 			this.selected = selected;
 			this.albums = [];
-			this.albumCount = 0;
-			this.trackCount = 0;
 			
 			this.updateDisplay();
 			

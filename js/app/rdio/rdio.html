@@ -1,4 +1,8 @@
-<img src="images/rdio.jpg" /><br/>
-<button ng-click="rdio.goToRdio()" ng-if="rdio.connect">Connect to Rdio</button>
-<button ng-click="rdio.getAlbums($event)" ng-if="rdio.getLibrary">{{rdio.GET_RDIO_LIB}}</button>
-<button ng-click="rdio.getAlbums($event, true)" ng-if="rdio.getAgain">Refresh Rdio Library</button>
+<div>
+    <img class="logo" src="images/rdio.jpg" /><br/>
+    <button ng-click="rdio.goToRdio()" ng-if="rdio.connect">Connect to Rdio</button>
+    <button ng-click="rdio.getAlbums($event)" ng-if="rdio.getLibrary">{{rdio.GET_RDIO_LIB}}</button>
+    <button ng-click="rdio.getAlbums($event, true)" ng-if="rdio.getAgain">Refresh Rdio Library</button>
+    <h4 class="detail">Albums ({{rdio.albumCount}})</h4>
+    <h4 class="detail">Tracks ({{rdio.trackCount}})</h4>
+</div>

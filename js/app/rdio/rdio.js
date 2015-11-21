@@ -1,9 +1,9 @@
 (function(){
 	MoveToSpotify.directive('rdio', Rdio);
 	
-	Rdio.$inject = [RDIO_SERVICE, '$log'];
+	Rdio.$inject = ['$rootScope', RDIO_SERVICE, '$log'];
 	
-	function Rdio(Service, $log){
+	function Rdio($rootScope, Service, $log){
 		
 		// Go get the code
 		function goToRdio(){
@@ -48,18 +48,38 @@
 			}.bind(this));
 		}
 		
+		function updateDisplay(){
+		    var result = Service.getLibrary();
+            if(result){
+                this.albumCount = result.total;
+                this.trackCount = 0;
+                
+                // Get track count
+                result.albums.forEach( function(album, index){
+                    this.trackCount += album.length;
+                }.bind(this));
+            }
+		}
+		
 		
 		function controller($scope){
 			this.checkStatus = checkStatus;
 			this.goToRdio = goToRdio;
 			this.getAlbums = getAlbums;
+			this.updateDisplay = updateDisplay;
 			this.connect = false;
 			this.getLibrary = false;
 			this.getAgain = false;
+			this.albumCount = 0;
+            this.trackCount = 0;
 			
 			this.GET_RDIO_LIB = "Get Rdio Albums";
 			
 			this.checkStatus();
+			this.updateDisplay();
+			
+			// Listen for update
+            $rootScope.$on(LIBRARY_REFRESH, this.updateDisplay.bind(this));
 		}
 		
 		return {

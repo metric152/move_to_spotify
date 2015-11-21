@@ -5,6 +5,7 @@
 	
 	// Events
 	LIBRARY_REFRESH = 'library-refresh';
+	SPOTIFY_REFRESH = 'spotify-refresh';
 	
 	// Redirect uri
 	REDIRECT_URI = "http://move.152.io";

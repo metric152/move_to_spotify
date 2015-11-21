@@ -1,6 +1,3 @@
-<h1 class="heading">Rdio Library</h1>
-<h4 class="detail">Albums ({{lib.albumCount}})</h4>
-<h4 class="detail">Tracks ({{lib.trackCount}})</h4>
 <div id="rdio-library">
 	<div class="album" ng-repeat="album in lib.albums track by $index">
 		<div class="album-art" ng-class="{'added': album.added, 'not-found': album.notFound}">

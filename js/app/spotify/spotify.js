@@ -1,13 +1,13 @@
 (function(){
 	MoveToSpotify.directive('spotify', Spotify);
 	
-	Spotify.$inject = [SPOTIFY_SERVICE, '$log'];
+	Spotify.$inject = ['$rootScope', SPOTIFY_SERVICE, RDIO_SERVICE, '$log'];
 	
-	function Spotify(Service, $log){
+	function Spotify($rootScope, SpotifyService, RdioService, $log){
 		
 		// OAUTH dance with spotify
 		function goToSpotify(){
-			Service.redirectToSpotify();
+			SpotifyService.redirectToSpotify();
 		}
 		
 		// Search for albums
@@ -16,7 +16,7 @@
 			$event.target.disabled = true;
 			$event.target.innerText = 'Searching Spotify. Please wait.';
 			
-			Service.searchForAlbums().then(function(){
+			SpotifyService.searchForAlbums().then(function(){
 				// Show the save button
 				this.save = true;
 				// Turn off search
@@ -34,7 +34,7 @@
 			$event.target.disabled = true;
 			$event.target.innerText = "Saving to Spotify. Please wait";
 			
-			Service.save().then(function(){
+			SpotifyService.save().then(function(){
 				$event.target.innerText = "Albums Saved to Spotify";
 			}.bind(this), function(result){
 				$event.target.innerText = this.SAVE_SPOTIFY;
@@ -45,13 +45,41 @@
 		
 		// Check to see if we're ready
 		function checkStatus(){
-			Service.checkStatus().then(function(){
-				// Start the search
-				this.search = true;
+			SpotifyService.checkStatus().then(function(){
+			    
+			    // Check to see if we've searched
+			    if(SpotifyService.isSearched()){
+			        this.save = true;
+			    }
+			    else{
+			        // Start the search
+	                this.search = true;
+			    }
 			}.bind(this), function(){
 				// We don't have a token yet
 				this.connect = true;
 			}.bind(this));
+		}
+		
+		function updateDisplay(){
+		    var result = RdioService.getLibrary();
+		    if(!result) return;
+		    
+		    this.albumCount = 0;
+		    this.trackCount = 0;
+		    
+		    result.albums.forEach( function(album, index){
+		        if(album.spotifyAlbumId && !album.hasOwnProperty('selected')){
+		            this.albumCount++;
+		            this.trackCount += album.length;
+		        }
+		    }.bind(this));
+		}
+		
+		function isSaveDisabled(){
+		    this.warn = this.trackCount > 10000;
+		    
+		    return this.warn;
 		}
 		
 		function controller($scope){
@@ -59,14 +87,22 @@
 			this.goToSpotify = goToSpotify
 			this.searchSpotify = searchSpotify;
 			this.saveToSpotify = saveToSpotify;
+			this.updateDisplay = updateDisplay;
+			this.isSaveDisabled = isSaveDisabled;
 			this.connect = false;
 			this.search = false;
 			this.save = false;
+			this.warn = false;
+			this.albumCount = 0;
+			this.trackCount = 0;
 			
 			this.SEARCH_SPOTIFY = "Search Spotify for Albums";
 			this.SAVE_SPOTIFY = "Save to Spotify";
 			
 			this.checkStatus();
+			this.updateDisplay();
+			
+			$rootScope.$on(SPOTIFY_REFRESH, this.updateDisplay.bind(this));
 		}
 		
 		return {

@@ -11,6 +11,7 @@
 		var ENDPOINT_URI = "https://api.spotify.com/";
 		
 		var TOKEN = 'spotify_token';
+		var SEARCHED = 'spotify_searched';
 		var FINISHED = 'spotify_finished';
 		
 		// Set the raw token
@@ -69,6 +70,11 @@
 			return {
 				'Authorization': 'Bearer ' + this.getAccessToken()
 			};
+		}
+		
+		// Check to see if we've searched
+		this.isSearched = function(){
+		    return localStorageService.get(SEARCHED);
 		}
 		
 		// Save the albums to spotify
@@ -144,6 +150,7 @@
 					else{
 						// Now we're done
 						deferred.resolve();
+						localStorageService.set(SEARCHED, true);
 					}
 				}.bind(this));
 			}
