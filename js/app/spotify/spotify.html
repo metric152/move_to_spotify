@@ -1,3 +1,4 @@
 <img src="images/spotify.jpg" /><br/>
 <button ng-click="spotify.goToSpotify()" ng-if="spotify.connect">Connect to Spotify</button>
 <button ng-click="spotify.searchSpotify($event)" ng-if="spotify.search">{{spotify.SEARCH_SPOTIFY}}</button>
+<button ng-click="spotify.saveToSpotify($event)" ng-if="spotify.save">{{spotify.SAVE_SPOTIFY}}</button>

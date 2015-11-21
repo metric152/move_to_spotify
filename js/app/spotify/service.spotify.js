@@ -71,18 +71,29 @@
 			};
 		}
 		
+		// Save the albums to spotify
+		this.save = function(){
+			var deferred = $q.defer();
+			
+			// TODO Mark the album as added with album.added
+			// TODO Batch your saves to 50
+			
+			/**
+			 * // Save the album
+						$http.put(ENDPOINT_URI + 'v1/me/albums', albums, {'headers': this.getAuthHeader()}).then(function(){
+							// Update the library
+							$rootScope.$broadcast(LIBRARY_REFRESH);
+						});
+			 */
+			
+			return deferred.promise;
+		}
+		
 		// Search for albums
 		this.searchForAlbums = function(){
 			var deferred = $q.defer();
 			var library = RdioService.getLibrary();
 			var countDown = library.total;
-			var albums = [];
-			
-			/**
-			 * TODO 
-			 * Look through your library for artists. Search for that artist and then gather their albums.
-			 * This will help you make fewer searches.
-			 */
 			
 			function search(album, index){
 				var params = {
@@ -96,18 +107,18 @@
 				// Search for the album
 				$http.get(ENDPOINT_URI + 'v1/search', params).then(function(response){
 					var searchResult = response.data.albums.items.pop();
-					
-					// Handle not finding an album
-					// Batch your album requests to 50
 					countDown--;
+					
+					// Save the spotify id
 					if(searchResult){
-						albums.push(searchResult.id);
-						
-						// The album was added
-						album.added = true;
-						// Update the library
-						RdioService.updateLibrary(album, index);
+						album.spotifyAlbumId = searchResult.id;
 					}
+					else{
+						album.notFound = true;
+					}
+					
+					// Update the library
+					RdioService.updateLibrary(album, index);
 					
 				}.bind(this), function(response){
 					//  Check for expired token
@@ -120,21 +131,13 @@
 						}.bind(this));
 					}
 				}.bind(this))['finally'](function(){
-					if(albums.length == 50 || countDown == 0){
-						// Save the album
-						$http.put(ENDPOINT_URI + 'v1/me/albums', albums, {'headers': this.getAuthHeader()}).then(function(){
-							// Update the library
-							$rootScope.$broadcast(LIBRARY_REFRESH);
-						});
-						
-						// Reset the albums
-						albums = [];
-					}
+					// Figure out when to update the countdown
+					if((countDown % 50) == 0 || countDown == 0) $rootScope.$broadcast(LIBRARY_REFRESH);
 					
 					// Check to see if we need to check the next album
-					var nextIndex = index + 1;
+					var nextIndex = ++index;
 					
-					if(library['albums'][nextIndex]){
+					if(countDown != 0){
 						search.call(this, library['albums'][nextIndex], nextIndex);
 					}
 					else{

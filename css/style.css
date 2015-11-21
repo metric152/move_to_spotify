@@ -8,6 +8,7 @@ h1.heading{
 
 h4.detail {
 	margin-top: 0;
+	margin-bottom: 0;
 }
 
 #rdio-library {
@@ -15,6 +16,7 @@ h4.detail {
 	width: 1100px;
 	height: 400px;
 	margin-bottom: 10px;
+	margin-top: 10px;
 }
 
 #rdio-library .album{
@@ -26,16 +28,25 @@ h4.detail {
 	text-align: center;
 }
 
-#rdio-library .album.added{
+#rdio-library .album-art.added,
+#rdio-library .album-art.not-found{
 	opacity: 0.25;
 	position: relative;
 }
 
-#rdio-library .album.added::before{
+#rdio-library .album-art.added::before{
 	content: 'Added';
+}
+
+#rdio-library .album-art.not-found::before{
+	content: 'Not Found';
+}
+
+#rdio-library .album-art.added::before,
+#rdio-library .album-art.not-found::before{
 	position: absolute;
-	top: 20px;
-	left: 50px;
+	top: 10px;
+	left: 70px;
 	font-weight: bold;
 	color: ivory;
 }
@@ -44,6 +55,19 @@ h4.detail {
 	min-height: 200px;
 	min-width: 200px;
 	padding-bottom: 5px;
+	position: relative;
+}
+
+#rdio-library .album .album-art .export{
+	position: absolute;
+	top: 10px;
+	left: 40px;
+	
+	/* All browsers except webkit*/
+      transform: scale(2);
+
+      /* Webkit browsers*/
+     -webkit-transform: scale(2);
 }
 
 #rdio-library .album .album-name{

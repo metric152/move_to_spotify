@@ -17,15 +17,29 @@
 			$event.target.innerText = 'Searching Spotify. Please wait.';
 			
 			Service.searchForAlbums().then(function(){
-				// Update the button
-				$event.target.disabled = false;
-				$event.target.innerText = 'Export to Spotify Complete';
-				
+				// Show the save button
+				this.save = true;
+				// Turn off search
+				this.search = false;
 			}.bind(this), function(message){
 				if(message) alert(message);
 				
 				$event.target.disabled = false;
 				$event.target.innerText = this.SEARCH_SPOTIFY;
+			}.bind(this));
+		}
+		
+		function saveToSpotify($event){
+			// Update the button
+			$event.target.disabled = true;
+			$event.target.innerText = "Saving to Spotify. Please wait";
+			
+			Service.save().then(function(){
+				$event.target.innerText = "Albums Saved to Spotify";
+			}.bind(this), function(result){
+				$event.target.innerText = this.SAVE_SPOTIFY;
+			}.bind(this))['finally']( function(){
+				$event.target.disabled = false;
 			}.bind(this));
 		}
 		
@@ -44,10 +58,13 @@
 			this.checkStatus = checkStatus;
 			this.goToSpotify = goToSpotify
 			this.searchSpotify = searchSpotify;
+			this.saveToSpotify = saveToSpotify;
 			this.connect = false;
 			this.search = false;
+			this.save = false;
 			
 			this.SEARCH_SPOTIFY = "Search Spotify for Albums";
+			this.SAVE_SPOTIFY = "Save to Spotify";
 			
 			this.checkStatus();
 		}

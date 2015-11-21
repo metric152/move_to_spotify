@@ -9,7 +9,12 @@
 			var result = Service.getLibrary();
 			if(result){
 				this.albums = result.albums;
-				this.count = result.total;
+				this.albumCount = result.total;
+				
+				// Get track count
+				this.albums.forEach( function(album, index){
+					this.trackCount += album.length;
+				}.bind(this));
 			}
 			
 			$timeout(function(){
@@ -22,10 +27,30 @@
 			}, 1000);
 		}
 		
+		// Add or remove the album from export
+		function include($event, $index, album){
+			if(!$event.target.checked){
+				album.selected = false;
+			}
+			else{
+				delete album['selected'];
+			}
+			// Update the library
+			Service.updateLibrary(album, $index);
+		}
+		
+		// Figure out if the album should be selected
+		function selected(album){
+			return album.spotifyAlbumId && !album.hasOwnProperty('selected');
+		}
+		
 		function controller($scope){
 			this.updateDisplay = updateDisplay;
+			this.include = include;
+			this.selected = selected;
 			this.albums = [];
-			this.count = 0;
+			this.albumCount = 0;
+			this.trackCount = 0;
 			
 			this.updateDisplay();
 			

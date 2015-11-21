@@ -114,7 +114,7 @@
 			// All requests are POST
 			// http://www.rdio.com/developers/docs/web-service/overview/
 			function getAlbums(off, sz){
-				var data = $httpParamSerializer({'method': 'getAlbumsInCollection', 'start': off, 'count': sz, 'sort': 'dateAdded', 'extras':'-*,name,artist,icon,album'});
+				var data = $httpParamSerializer({'method': 'getAlbumsInCollection', 'start': off, 'count': sz, 'sort': 'dateAdded', 'extras':'-*,name,artist,icon,album,length'});
 				var params = {
 					'headers': {
 						'content-type': undefined,
@@ -125,7 +125,6 @@
 				
 				// Go get the albums
 				$http.post(ENDPOINT_URI + 'getAlbumsInCollection', data, params).then( function(response){
-					$log.debug(response);
 					var albums = response.data.result;
 					
 					addToLibrary(albums);
