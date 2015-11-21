@@ -76,30 +76,27 @@
 			var deferred = $q.defer();
 			var library = RdioService.getLibrary();
 			
-			function search(artist, album){
+			function search(album, index){
 				var params = {
 					'params':{
 						'type':'album',
-						'q': sprintf('album:%s artist:%s', album, artist)
+						'q': sprintf('album:%s artist:%s', album['name'], album['artist'])
 					},
 					'headers': this.getAuthHeader()
 				};
 				
 				// Search for the album
 				$http.get(ENDPOINT_URI + 'v1/search', params).then(function(response){
-					$log.debug(response);
 					var album = response.data.albums.items.pop();
 					
 					// Save the album
 					return $http.put(ENDPOINT_URI + 'v1/me/albums', [album.id], {'headers': this.getAuthHeader()});
 					
 				}.bind(this), function(response){
-					$log.debug(response);
-					
 					//  Check for expired token
 					if(response.data.error.message.indexOf("token expired") > -1){
 						this.getRefreshToken().then(function(response){
-							search.call(this, artist, album);
+							search.call(this, album, index);
 						}.bind(this), function(response){
 							alert('Issue getting refresh token');
 							deferred.reject();
@@ -107,8 +104,12 @@
 					}
 				}.bind(this))
 				.then(function(response){
-					$log.debug(response);
+					// The album was added
+					album.added = true;
+					// Update the library
+					RdioService.updateLibrary(album, index);
 				}.bind(this), function(response){
+					// Adding the album failed
 					$log.debug(response);
 				}.bind(this));
 			}
@@ -119,7 +120,7 @@
 				return;
 			}
 			
-			search.call(this, library['albums'][0]['artist'], library['albums'][0]['name']);
+			search.call(this, library['albums'][0], 0);
 			
 			return deferred.promise;
 		}

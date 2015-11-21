@@ -64,8 +64,7 @@
 			// Append the albums
 			lib.albums = lib.albums.concat(albums);
 			
-			// Store the results
-			localStorageService.set(LIBRARY, lib);
+			setLibrary(lib);
 		}
 		
 		// Check to see if the library is avaliable
@@ -75,9 +74,16 @@
 			return (result && result === true);
 		}
 		
-		// Upate song
-		this.updateLibrary = function(song, index){
+		// Upate album
+		this.updateLibrary = function(album, index){
+			var lib = this.getLibrary();
+			lib.albums.splice(index, 1, album);
 			
+			// Update the library
+			setLibrary(lib);
+			
+			// Update the library listing
+			$rootScope.$broadcast(LIBRARY_REFRESH);
 		}
 		
 		// Get the library
@@ -88,6 +94,12 @@
 			}
 			
 			return lib;
+		}
+		
+		// Set the library
+		function setLibrary(library){
+			// Store the results
+			localStorageService.set(LIBRARY, library);
 		}
 		
 		// Go get the albums
