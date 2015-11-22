@@ -80,19 +80,73 @@
 		// Save the albums to spotify
 		this.save = function(){
 			var deferred = $q.defer();
+			var library = RdioService.getLibrary();
+			var albumIds = [];
+			var albumIndex = {};
 			
-			// TODO Mark the album as added with album.added
-			// TODO Batch your saves to 50
-			// TODO If !album.selected skip the album
+			if(!library || (library && library.total == 0)){
+			    deferred.reject('There is no library');
+			    return deferred.promise;
+			}
 			
-			/**
-			 * // Save the album
-						$http.put(ENDPOINT_URI + 'v1/me/albums', albums, {'headers': this.getAuthHeader()}).then(function(){
-							// Update the library
-							$rootScope.$broadcast(LIBRARY_REFRESH);
-						});
-			 */
+			library.albums.forEach(function(album, index){
+			    // The album is already added
+			    if(album.added) return;
+			    // The album wasn't selected for import
+			    if(album.hasOwnProperty('selected')) return;
+			    // The album wasn't found on spotify
+			    if(!album.spotifyAlbumId) return;
+			    
+			    // Now add the album
+			    albumIds.push(album.spotifyAlbumId);
+			    
+			    /**
+			     * As I'm looping through this, get the index of the album and store it on the spotifyAlbumId.
+			     * That way I have a 1-1 map of the albumId and the index. This should make saving easy
+			     */
+			    albumIndex[album.spotifyAlbumId] = {
+		            'album': album,
+		            'index': index
+			    };
+			    
+			}.bind(this));
 			
+			function save(){
+			    // Batch your saves to 50
+			    var albumsToSave = albumIds.splice(0,50);
+			    
+			    $http.put(ENDPOINT_URI + 'v1/me/albums', albumsToSave, {'headers': this.getAuthHeader()}).then(function(){
+                    // Update the albums
+			        albumsToSave.forEach(function(spotifyAlbumId){
+			            // Mark the album as added with album.added
+			            albumIndex[spotifyAlbumId].album.added = true;
+			            RdioService.updateLibrary(albumIndex[spotifyAlbumId].album, albumIndex[spotifyAlbumId]);
+			        })
+			        
+			        // Check to see if we need to save again
+			        if(albumIds.length > 0){
+			            save.call(this);
+			        }
+			        else{
+			            // Update the library
+	                    $rootScope.$broadcast(LIBRARY_REFRESH);
+	                    deferred.resolve();
+			        }
+                }.bind(this), function(response){
+                    //  Check for expired token
+                    if(response.data.error.message.indexOf("token expired") > -1){
+                        this.getRefreshToken().then(function(response){
+                            save.call(this);
+                        }.bind(this), function(response){
+                            alert('Issue getting refresh token');
+                            deferred.reject();
+                        }.bind(this));
+                    }
+                }.bind(this));
+			    
+			}
+			// Start the save process
+			save.call(this);
 			return deferred.promise;
 		}
 		
@@ -121,6 +175,7 @@
 						album.spotifyAlbumId = searchResult.id;
 					}
 					else{
+					    // Used for markup control
 						album.notFound = true;
 					}
 					
@@ -139,7 +194,10 @@
 					}
 				}.bind(this))['finally'](function(){
 					// Figure out when to update the countdown
-					if((countDown % 50) == 0 || countDown == 0) $rootScope.$broadcast(LIBRARY_REFRESH);
+					if((countDown % 50) == 0 || countDown == 0){
+					    $rootScope.$broadcast(LIBRARY_REFRESH);
+					    $rootScope.$broadcast(SPOTIFY_REFRESH);
+					}
 					
 					// Check to see if we need to check the next album
 					var nextIndex = ++index;

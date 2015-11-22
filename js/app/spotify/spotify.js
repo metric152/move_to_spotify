@@ -36,7 +36,8 @@
 			
 			SpotifyService.save().then(function(){
 				$event.target.innerText = "Albums Saved to Spotify";
-			}.bind(this), function(result){
+			}.bind(this), function(message){
+			    alert(message);
 				$event.target.innerText = this.SAVE_SPOTIFY;
 			}.bind(this))['finally']( function(){
 				$event.target.disabled = false;
