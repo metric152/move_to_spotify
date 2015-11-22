@@ -6,5 +6,6 @@
 		</div>
 		<div class="album-name">{{album.name}}</div>
 		<div class="artist">{{album.artist}}</div>
+        <div class="app-link" ng-if="album.spotifyLink"><a ng-href="{{album.spotifyLink}}">Open in Spotify</a></div>
 	</div>
 </div>

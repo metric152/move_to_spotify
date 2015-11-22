@@ -112,8 +112,8 @@
 			}.bind(this));
 			
 			function save(){
-			    // Batch your saves to 40
-			    var albumsToSave = albumIds.splice(0,40);
+			    // Batch your saves to 5
+			    var albumsToSave = albumIds.splice(0,5);
 			    
 			    $http.put(ENDPOINT_URI + 'v1/me/albums', albumsToSave, {'headers': this.getAuthHeader()}).then(function(){
                     // Update the albums
@@ -139,9 +139,11 @@
                         this.getRefreshToken().then(function(response){
                             save.call(this);
                         }.bind(this), function(response){
-                            alert('Issue getting refresh token');
-                            deferred.reject();
+                            deferred.reject('There was an issue connecting with spotify.');
                         }.bind(this));
+                    }
+                    else if(response.data.error.message.indexOf("limit exceeded") > -1){
+                        deferred.reject("I can't add anymore albums. Scroll to see what was left out.");
                     }
                 }.bind(this));
 			    
@@ -174,6 +176,7 @@
 					// Save the spotify id
 					if(searchResult){
 						album.spotifyAlbumId = searchResult.id;
+						album.spotifyLink = searchResult.uri;
 					}
 					else{
 					    // Used for markup control

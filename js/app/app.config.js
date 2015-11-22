@@ -12,13 +12,16 @@
 	
 	MoveToSpotify.config(Configure);
 	
-	Configure.$inject = ['$locationProvider'];
+	Configure.$inject = ['$locationProvider', '$compileProvider'];
 	
-	function Configure($locationProvider){
+	function Configure($locationProvider, $compileProvider){
 		// This allows $location to look at the URI
 		$locationProvider.html5Mode({
 			'enabled': true,
 			'requireBase': false
 		});
+		
+		// Allow angular to open albums in spotify app
+		$compileProvider.aHrefSanitizationWhitelist(/^\s*(spotify):/);
 	}
 })();

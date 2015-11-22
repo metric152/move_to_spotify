@@ -14,6 +14,8 @@
 		var LIBRARY = 'library';
 		var FINISHED = 'rdio_finished';
 		
+		var albumCache = {};
+		
 		// Set the raw token
 		this.setToken = function(token){
 			// Store the response
@@ -53,16 +55,27 @@
 		// Add the albums to your library
 		function addToLibrary(albums){
 			var lib = {'total': 0, 'albums':[]};
+			var albumsToAdd = [];
 			
 			// Check to see if we have a lib
 			if(localStorageService.get(LIBRARY)){
 				lib = localStorageService.get(LIBRARY);
 			}
 			
+			// Look through the incoming albums
+			albums.forEach( function(album){
+			    // Skip the album if we've added it
+			    if(albumCache[sprintf('%s|%s', album.artist.trim(), album.name.trim())]) return;
+			    
+			    // Record the album
+			    albumCache[sprintf('%s|%s', album.artist.trim(), album.name.trim())] = true;
+			    albumsToAdd.push(album);
+			});
+			
 			// Update the total
-			lib.total += albums.length;
+			lib.total += albumsToAdd.length;
 			// Append the albums
-			lib.albums = lib.albums.concat(albums);
+			lib.albums = lib.albums.concat(albumsToAdd);
 			
 			setLibrary(lib);
 		}
@@ -140,6 +153,8 @@
 					}
 					else{
 						localStorageService.set(FINISHED, true);
+						// Cache cleanup
+						albumCache = {};
 						deferred.resolve();
 					}
 					

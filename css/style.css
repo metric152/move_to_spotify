@@ -108,3 +108,8 @@ h4.detail {
 	color: silver;
 	font-size: 0.8em;
 }
+
+#rdio-library .album .app-link{
+    font-size: 0.8em;
+    margin-top: 5px;
+}
