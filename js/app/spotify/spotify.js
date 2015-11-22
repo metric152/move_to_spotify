@@ -78,7 +78,7 @@
 		}
 		
 		function isSaveDisabled(){
-		    this.warn = this.trackCount > 10000;
+		    this.warn = this.trackCount > 9900;
 		    
 		    return this.warn;
 		}

@@ -112,24 +112,25 @@
 			}.bind(this));
 			
 			function save(){
-			    // Batch your saves to 50
-			    var albumsToSave = albumIds.splice(0,50);
+			    // Batch your saves to 40
+			    var albumsToSave = albumIds.splice(0,40);
 			    
 			    $http.put(ENDPOINT_URI + 'v1/me/albums', albumsToSave, {'headers': this.getAuthHeader()}).then(function(){
                     // Update the albums
 			        albumsToSave.forEach(function(spotifyAlbumId){
 			            // Mark the album as added with album.added
 			            albumIndex[spotifyAlbumId].album.added = true;
-			            RdioService.updateLibrary(albumIndex[spotifyAlbumId].album, albumIndex[spotifyAlbumId]);
+			            RdioService.updateLibrary(albumIndex[spotifyAlbumId].album, albumIndex[spotifyAlbumId].index);
 			        })
+			        
+			        // Update the library
+                    $rootScope.$broadcast(LIBRARY_REFRESH);
 			        
 			        // Check to see if we need to save again
 			        if(albumIds.length > 0){
 			            save.call(this);
 			        }
 			        else{
-			            // Update the library
-	                    $rootScope.$broadcast(LIBRARY_REFRESH);
 	                    deferred.resolve();
 			        }
                 }.bind(this), function(response){
