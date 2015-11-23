@@ -92,19 +92,28 @@
 			return SpotifyService.getPreflightInfo(true).tracks;
 		}
 		
+		function select(checked){
+			RdioService.getLibrary().albums.forEach(function(album){
+				album.selected = checked;
+			})
+			RdioService.saveLibrary();
+		}
+		
 		function controller($scope){
 			this.checkStatus = checkStatus;
 			this.goToSpotify = goToSpotify
 			this.searchSpotify = searchSpotify;
 			this.saveToSpotify = saveToSpotify;
-			this.updateDisplay = updateDisplay;
 			this.isSaveDisabled = isSaveDisabled;
 			this.getAlbumCount = getAlbumCount;
 			this.getTrackCount = getTrackCount;
+			this.select = select;
 			this.connect = false;
 			this.search = false;
 			this.save = false;
 			this.warn = false;
+			
+			this.updateDisplay = updateDisplay;
 			
 			
 			this.SEARCH_SPOTIFY = "Search Spotify for Albums";

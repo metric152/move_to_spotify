@@ -29,15 +29,6 @@ h4.detail {
     float: left;
 }
 
-#spotify{
-    float: left;
-    margin-left: 100px;
-}
-
-#spotify img.logo{
-    height: 65;
-}
-
 #rdio-library {
 	overflow: auto;
 	width: 100%;
@@ -112,4 +103,17 @@ h4.detail {
 #rdio-library .album .app-link{
     font-size: 0.8em;
     margin-top: 5px;
+}
+
+#spotify{
+    float: left;
+    margin-left: 100px;
+}
+
+#spotify img.logo{
+    height: 65;
+}
+
+#spotify button.save{
+	margin-bottom: 10px;
 }

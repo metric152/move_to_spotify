@@ -114,6 +114,7 @@
 			// Store the results
 			localStorageService.set(LIBRARY, albumLibrary);
 		}
+		this.saveLibrary = saveLibrary;
 		
 		// Go get the albums
 		this.getAlbums = function(reset){

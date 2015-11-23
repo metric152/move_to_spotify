@@ -20,28 +20,13 @@
 		}
 		
 		// Add or remove the album from export
-		function include($event, $index, album){
-			if(!$event.target.checked){
-				album.selected = false;
-			}
-			else{
-				delete album['selected'];
-			}
+		function save(){
 			// Update the library
-			Service.updateLibrary(album, $index);
-			
-			// Update spotify count
-			$rootScope.$broadcast(SPOTIFY_REFRESH);
-		}
-		
-		// Figure out if the album should be selected
-		function selected(album){
-			return album.spotifyAlbumId && !album.hasOwnProperty('selected');
+			Service.saveLibrary();
 		}
 		
 		function controller($scope){
-			this.include = include;
-			this.selected = selected;
+			this.save = save;
 			this.albums = Service.getLibrary;
 			this.loadArtwork = loadArtwork;
 		}

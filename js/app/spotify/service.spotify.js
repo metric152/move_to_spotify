@@ -92,7 +92,7 @@
 			    if(all && album.added) return;
 			    
 			    // The album wasn't selected for import
-			    if(album.hasOwnProperty('selected')) return;
+			    if(!album.selected) return;
 			    // The album wasn't found on spotify
 			    if(!album.spotifyAlbumId) return;
 			    
