@@ -11,16 +11,15 @@
 		}
 		
 		// Get the list of albums
-		function getAlbums($event, reset){
+		function getAlbums($event){
 			// Update button
 			$event.target.disabled = true;
 			$event.target.innerText = "Getting albums. Please wait.";
 			
 			// Go get albums
-			Service.getAlbums(reset).then(function(result){
-				this.getLibrary = false;
+			Service.getAlbums().then(function(result){
+				this.getLibrary = true;
 				this.connect = false;
-				this.getAgain = true;
 				
 			}.bind(this))['finally']( function(){
 				$event.target.disabled = false;
@@ -31,16 +30,8 @@
 		// Check to see if we've made a connection to rdio
 		function checkStatus(){
 			Service.checkStatus().then(function(){
-				
-				// Check to see if we have a library
-				if(Service.isLibraryAvaliable()){
-					this.getAgain = true;
-				}
-				// Allow the user to get their album library
-				else{
-					this.getLibrary = true;
-				}
-				
+				// Allow the user to get the library again
+				this.getLibrary = true;
 			}.bind(this), function(){
 				// We don't have a token yet
 				this.connect = true;
@@ -56,7 +47,7 @@
 			var trackCount = 0;
 			
 			// Get track count
-            result.albums.forEach(function(album, index){
+            result.albums.forEach(function(album){
                 trackCount += album.length;
             });
             
@@ -71,7 +62,6 @@
 			this.getTrackCount = getTrackCount;
 			this.connect = false;
 			this.getLibrary = false;
-			this.getAgain = false;
 			
 			this.GET_RDIO_LIB = "Get Rdio Albums";
 			

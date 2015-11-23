@@ -13,7 +13,6 @@
 		var LIBRARY = 'library';
 		var FINISHED = 'rdio_finished';
 		
-		var albumCache = {};
 		var albumLibrary = null;
 		
 		// Set the raw token
@@ -40,6 +39,35 @@
 			return result.access_token;
 		}
 		
+		// Make sure we have a good token before the request
+		this.checkAccessToken = function(){
+			var deferred = $q.defer();
+			var data = $httpParamSerializer({'method': 'currentUser', 'extras':'albumCount,trackCount'});
+			var params = {
+				'headers': {
+					'content-type': undefined,
+					'x-rdio-client-id': CLIENT_ID,
+					'Authorization': 'Bearer ' + this.getAccessToken()
+				}
+			};
+				
+			// Go get the albums
+			$http.post(ENDPOINT_URI + 'currentUser', data, params).then(deferred.resolve, function(response){
+				// http://www.rdio.com/developers/docs/web-service/oauth2/overview/ref-using-a-refresh-token
+				if(response.data.error == "invalid_token"){
+					this.getRefreshToken().then( function(){
+						// We've got a new token. Try again
+						deferred.resolve();
+					}.bind(this), function(){
+						alert('Error getting refresh token');
+						deferred.reject();
+					}.bind(this));
+				}
+			}.bind(this));
+			
+			return deferred.promise;
+		}
+		
 		// Redirect to the auto page
 		this.redirectToRdio = function(){
 			$window.location.href = OAUTH_URI + '?' + $httpParamSerializer({
@@ -52,43 +80,11 @@
 			});
 		}
 		
-		// Add the albums to your library
-		function addToLibrary(albums){
-			var lib = getLibrary();
-			var albumsToAdd = [];
-			
-			// Look through the incoming albums
-			albums.forEach( function(album){
-			    // Skip the album if we've added it
-			    if(albumCache[sprintf('%s|%s', album.artist.trim(), album.name.trim())]) return;
-			    
-			    // Record the album
-			    albumCache[sprintf('%s|%s', album.artist.trim(), album.name.trim())] = true;
-			    albumsToAdd.push(album);
-			});
-			
-			// Update the total
-			lib.total += albumsToAdd.length;
-			// Append the albums
-			lib.albums = lib.albums.concat(albumsToAdd);
-			
-			saveLibrary();
-		}
-		
 		// Check to see if the library is avaliable
 		this.isLibraryAvaliable = function(){
 			var result = localStorageService.get(FINISHED);
 			
 			return (result && result === true);
-		}
-		
-		// Update album
-		this.updateLibrary = function(album, index){
-			var lib = getLibrary();
-			lib.albums.splice(index, 1, album);
-			
-			// Update the library
-			saveLibrary();
 		}
 		
 		// Get the library
@@ -121,17 +117,12 @@
 			var size = 307; // Make the number prime
 			var offset = 0;
 			var deferred = $q.defer();
-			reset = (typeof reset === "boolean") ? reset : false;
-			
-			// Clear out the library
-			if(reset){
-				localStorageService.remove(LIBRARY);
-			}
+			var albumsToAdd = [];
 			
 			// All requests are POST
 			// http://www.rdio.com/developers/docs/web-service/overview/
 			function getAlbums(off, sz){
-				var data = $httpParamSerializer({'method': 'getFavorites', 'start': off, 'count': sz, 'types':'tracksAndAlbums', 'sort': 'dateAdded', 'extras':'-*,name,artist,icon,album,length'});
+				var data = $httpParamSerializer({'method': 'getFavorites', 'start': off, 'count': sz, 'types':'tracksAndAlbums', 'extras':'-*,name,artist,icon,album,length'});
 				var params = {
 					'headers': {
 						'content-type': undefined,
@@ -143,42 +134,50 @@
 				// Go get the albums
 				$http.post(ENDPOINT_URI + 'getAlbumsInCollection', data, params).then( function(response){
 					var albums = response.data.result;
+					var albumCache = {};
+					var finalAlbumList = [];
 					
-					addToLibrary(albums);
+					// Save the results
+					albumsToAdd = albumsToAdd.concat(albums);
 					
 					// Check to see if we need to run again
 					if(albums.length == sz){
-						// So we don't get throttled 
-						$timeout(function(){
-							getAlbums.call(this, off + sz, sz);
-						}.bind(this), 1000);
+						getAlbums.call(this, off + sz, sz);
 					}
 					else{
+						albumLibrary.total = 0;
+						
+						// Look through the incoming albums
+						albumsToAdd.forEach( function(album){
+						    // Skip the album if we've added it
+						    if(albumCache[sprintf('%s|%s', album.artist.trim(), album.name.trim())]) return;
+						    
+						    // Record the album
+						    albumCache[sprintf('%s|%s', album.artist.trim(), album.name.trim())] = true;
+						    finalAlbumList.push(album);
+						    
+						    // Update the total
+							albumLibrary.total++;
+						});
+						
+						
+						// Append the albums in the reverse order
+						albumLibrary.albums = finalAlbumList.reverse();
+						
+						saveLibrary();
+						
 						localStorageService.set(FINISHED, true);
+						
 						// Cache cleanup
-						albumCache = {};
 						deferred.resolve();
 					}
 					
-				}.bind(this), function(response){
-					// Check for a bad token error
-					// http://www.rdio.com/developers/docs/web-service/oauth2/overview/ref-using-a-refresh-token
-					if(response.data.error == "invalid_token"){
-						this.getRefreshToken().then( function(){
-							// We've got a new token. Try again
-							getAlbums.call(this, off, sz);
-						}.bind(this), function(){
-							alert('Error getting refresh token');
-							deferred.reject();
-						}.bind(this));
-					}
-					else{
-						deferred.reject();
-					}
-				}.bind(this));
+				}.bind(this), deferred.reject);
 			}
 			
-			getAlbums.call(this, offset, size);
+			this.checkAccessToken().then(function(){
+				getAlbums.call(this, offset, size);
+			}.bind(this));
 			
 			return deferred.promise;
 		}
