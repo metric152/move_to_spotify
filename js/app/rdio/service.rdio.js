@@ -15,6 +15,7 @@
 		var FINISHED = 'rdio_finished';
 		
 		var albumCache = {};
+		var albumLibrary = null;
 		
 		// Set the raw token
 		this.setToken = function(token){
@@ -54,13 +55,8 @@
 		
 		// Add the albums to your library
 		function addToLibrary(albums){
-			var lib = {'total': 0, 'albums':[]};
+			var lib = getLibrary();
 			var albumsToAdd = [];
-			
-			// Check to see if we have a lib
-			if(localStorageService.get(LIBRARY)){
-				lib = localStorageService.get(LIBRARY);
-			}
 			
 			// Look through the incoming albums
 			albums.forEach( function(album){
@@ -77,7 +73,7 @@
 			// Append the albums
 			lib.albums = lib.albums.concat(albumsToAdd);
 			
-			setLibrary(lib);
+			saveLibrary();
 		}
 		
 		// Check to see if the library is avaliable
@@ -87,29 +83,37 @@
 			return (result && result === true);
 		}
 		
-		// Upate album
+		// Update album
 		this.updateLibrary = function(album, index){
-			var lib = this.getLibrary();
+			var lib = getLibrary();
 			lib.albums.splice(index, 1, album);
 			
 			// Update the library
-			setLibrary(lib);
+			saveLibrary();
 		}
 		
 		// Get the library
-		this.getLibrary = function(){
-			var lib = null;
-			if(localStorageService.get(LIBRARY)){
-				lib = localStorageService.get(LIBRARY);
-			}
-			
-			return lib;
+		function getLibrary(){
+		    // If we have something return it right away
+		    if(albumLibrary) return albumLibrary;
+		    
+		    // If it's null check local storage first
+		    if(!albumLibrary && localStorageService.get(LIBRARY)){
+		        albumLibrary = localStorageService.get(LIBRARY);
+		    }
+		    // Return the default
+		    else{
+		        albumLibrary = {'total': 0, 'albums':[]}
+		    }
+		    
+			return albumLibrary;
 		}
+		this.getLibrary = getLibrary;
 		
-		// Set the library
-		function setLibrary(library){
+		// Save the library
+		function saveLibrary(){
 			// Store the results
-			localStorageService.set(LIBRARY, library);
+			localStorageService.set(LIBRARY, albumLibrary);
 		}
 		
 		// Go get the albums
@@ -142,7 +146,7 @@
 					
 					addToLibrary(albums);
 					// Update the library listing
-					$rootScope.$broadcast(LIBRARY_REFRESH);
+//					$rootScope.$broadcast(LIBRARY_REFRESH);
 					
 					// Check to see if we need to run again
 					if(albums.length == sz){

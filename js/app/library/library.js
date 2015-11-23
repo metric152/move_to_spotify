@@ -45,12 +45,12 @@
 			this.updateDisplay = updateDisplay;
 			this.include = include;
 			this.selected = selected;
-			this.albums = [];
+			this.albums = Service.getLibrary;
 			
-			this.updateDisplay();
+			//this.updateDisplay();
 			
 			// Listen for update
-			$rootScope.$on(LIBRARY_REFRESH, this.updateDisplay.bind(this));
+			//$rootScope.$on(LIBRARY_REFRESH, this.updateDisplay.bind(this));
 		}
 		
 		return {
