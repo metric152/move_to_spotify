@@ -7,7 +7,7 @@
 		
 		// Listen for the last element to be drawn then run the plugin
 		function loadArtwork($last){
-			if(!$last) return;
+			if(!$last || !Service.isLibraryAvaliable()) return;
 			
 			$timeout(function(){
 				// Set up image lazy load
@@ -40,7 +40,6 @@
 		}
 		
 		function controller($scope){
-			this.updateDisplay = updateDisplay;
 			this.include = include;
 			this.selected = selected;
 			this.albums = Service.getLibrary;
