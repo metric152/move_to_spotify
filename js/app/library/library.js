@@ -5,11 +5,9 @@
 	
 	function Library($rootScope, Service, $timeout, $log){
 		
-		function updateDisplay(){
-			var result = Service.getLibrary();
-			if(result){
-				this.albums = result.albums;
-			}
+		// Listen for the last element to be drawn then run the plugin
+		function loadArtwork($last){
+			if(!$last) return;
 			
 			$timeout(function(){
 				// Set up image lazy load
@@ -46,11 +44,7 @@
 			this.include = include;
 			this.selected = selected;
 			this.albums = Service.getLibrary;
-			
-			//this.updateDisplay();
-			
-			// Listen for update
-			//$rootScope.$on(LIBRARY_REFRESH, this.updateDisplay.bind(this));
+			this.loadArtwork = loadArtwork;
 		}
 		
 		return {

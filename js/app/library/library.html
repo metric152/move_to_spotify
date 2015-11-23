@@ -1,6 +1,6 @@
 <div id="rdio-library">
 	<div class="album" ng-repeat="album in lib.albums().albums track by $index">
-		<div class="album-art" ng-class="{'added': album.added, 'not-found': album.notFound}">
+		<div class="album-art" ng-class="{'added': album.added, 'not-found': album.notFound}" ng-init="lib.loadArtwork($last)">
 			<input data-spotify-album-id="{{album.spotifyAlbumId}}" ng-click="lib.include($event, $index, album)" class="export" type="checkbox" ng-disabled="album.added" ng-if="album.spotifyAlbumId" ng-checked="lib.selected(album)"/>
 			<img alt="{{album.name}} - {{album.artist}}" class="b-lazy" data-blazy="{{album.icon}}" />
 		</div>
