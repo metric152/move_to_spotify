@@ -147,70 +147,48 @@
 			var library = RdioService.getLibrary();
 			var albumIds = [];
 			var albumIndex = {};
+			var albumsToSave = this.getPreflightInfo();
+			var batchNumber = 5;
 			
-			if(!library || (library && library.total == 0)){
-			    deferred.reject('There is no library');
+			if(albumsToSave.albums == 0){
+			    deferred.reject('Add some albums before you save.');
 			    return deferred.promise;
 			}
 			
-			library.albums.forEach(function(album, index){
-			    // The album is already added
-			    if(album.added) return;
-			    // The album wasn't selected for import
-			    if(album.hasOwnProperty('selected')) return;
-			    // The album wasn't found on spotify
-			    if(!album.spotifyAlbumId) return;
-			    
-			    // Now add the album
-			    albumIds.push(album.spotifyAlbumId);
-			    
-			    /**
-			     * As I'm looping through this, get the index of the album and store it on the spotifyAlbumId.
-			     * That way I have a 1-1 map of the albumId and the index. This should make saving easy
-			     */
-			    albumIndex[album.spotifyAlbumId] = {
-		            'album': album,
-		            'index': index
-			    };
-			    
+			this.checkAccessToken().then(function(){
+				function save(){
+				    // Batch your saves to 5
+				    var spotifyAlbumIds = albumsToSave.spotifyAlbumIds.splice(0, batchNumber);
+				    
+				    $http.put(ENDPOINT_URI + 'v1/me/albums', spotifyAlbumIds, {'headers': this.getAuthHeader()}).then(function(){
+	                    // Update the albums
+				    	spotifyAlbumIds.forEach(function(spotifyAlbumId){
+				            // Mark the album as added with album.added
+				        	albumsToSave.albumIndex[spotifyAlbumId].album.added = true;
+				        });
+				    	
+				    	// Save our progress
+			        	RdioService.saveLibrary();
+				        
+				        // Check to see if we need to save again
+				        if(albumsToSave.spotifyAlbumIds.length > 0){
+				            save.call(this);
+				        }
+				        else{
+		                    deferred.resolve();
+				        }
+	                }.bind(this), function(response){
+	                	// We hit the album limit
+	                    if(response.data.error.message.indexOf("limit exceeded") > -1){
+	                        deferred.reject("I can't add anymore albums. Scroll to see what was left out.");
+	                    }
+	                }.bind(this));
+				}
+				
+				// Start the save process
+				save.call(this);
 			}.bind(this));
 			
-			function save(){
-			    // Batch your saves to 5
-			    var albumsToSave = albumIds.splice(0,5);
-			    
-			    $http.put(ENDPOINT_URI + 'v1/me/albums', albumsToSave, {'headers': this.getAuthHeader()}).then(function(){
-                    // Update the albums
-			        albumsToSave.forEach(function(spotifyAlbumId){
-			            // Mark the album as added with album.added
-			            albumIndex[spotifyAlbumId].album.added = true;
-			            RdioService.updateLibrary(albumIndex[spotifyAlbumId].album, albumIndex[spotifyAlbumId].index);
-			        })
-			        
-			        // Check to see if we need to save again
-			        if(albumIds.length > 0){
-			            save.call(this);
-			        }
-			        else{
-	                    deferred.resolve();
-			        }
-                }.bind(this), function(response){
-                    //  Check for expired token
-                    if(response.data.error.message.indexOf("token expired") > -1){
-                        this.getRefreshToken().then(function(response){
-                            save.call(this);
-                        }.bind(this), function(response){
-                            deferred.reject('There was an issue connecting with spotify.');
-                        }.bind(this));
-                    }
-                    else if(response.data.error.message.indexOf("limit exceeded") > -1){
-                        deferred.reject("I can't add anymore albums. Scroll to see what was left out.");
-                    }
-                }.bind(this));
-			    
-			}
-			// Start the save process
-			save.call(this);
 			return deferred.promise;
 		}
 		
