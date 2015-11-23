@@ -198,6 +198,7 @@
 			var library = RdioService.getLibrary();
 			var countDown = library.total;
 			var index = 0;
+			var throttle = 250;
 			
 			// If we have no library just stop
 			if(library.total == 0) {
@@ -242,7 +243,10 @@
 							localStorageService.set(SEARCHED, true);
 						}
 						else{
-							search.call(this, library.albums[++index]);
+							// Throttle search
+							$timeout(function(){
+								search.call(this, library.albums[++index]);
+							}.bind(this), throttle);
 						}
 					}.bind(this));
 				};

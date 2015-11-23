@@ -1,9 +1,9 @@
 (function(){
 	MoveToSpotify.service(RDIO_SERVICE, Service);
 	
-	Service.$inject = ['$rootScope', '$http', '$q', '$location', '$window', '$httpParamSerializer', '$timeout', 'localStorageService', '$log'];
+	Service.$inject = ['$rootScope', '$http', '$q', '$location', '$window', '$httpParamSerializer', 'localStorageService', '$log'];
 	
-	function Service($rootScope, $http, $q, $location, $window, $httpParamSerializer, $timeout, localStorageService, $log){
+	function Service($rootScope, $http, $q, $location, $window, $httpParamSerializer, localStorageService, $log){
 		var CLIENT_ID = RDIO_CLIENT_ID;
 		
 		var OAUTH_URI = "https://www.rdio.com/oauth2/authorize";
