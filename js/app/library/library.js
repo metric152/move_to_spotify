@@ -16,7 +16,7 @@
 					'container': '#rdio-library',
 					'src': 'data-blazy'
 				});
-			}, 1000);
+			}, 2000);
 		}
 		
 		// Add or remove the album from export
