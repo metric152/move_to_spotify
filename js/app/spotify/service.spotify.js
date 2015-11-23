@@ -76,6 +76,48 @@
 		    return localStorageService.get(SEARCHED);
 		}
 		
+		// Get info about the current album selection
+		this.getPreflightInfo = function(all){
+			all = (typeof all == "boolean" ? all : false);
+			var library = RdioService.getLibrary();
+			var result = {
+				'spotifyAlbumIds': [],
+				'albumIndex': {},
+				'tracks': 0,
+				'albums': 0
+			};
+			
+			library.albums.forEach(function(album, index){
+			    // The album is already added
+			    if(all && album.added) return;
+			    
+			    // The album wasn't selected for import
+			    if(album.hasOwnProperty('selected')) return;
+			    // The album wasn't found on spotify
+			    if(!album.spotifyAlbumId) return;
+			    
+			    // Now add the album
+			    result.spotifyAlbumIds.push(album.spotifyAlbumId);
+			    
+			    // Add album
+			    result.albums++;
+			    // Add tracks
+			    result.tracks += album.length;
+			    
+			    /**
+			     * As I'm looping through this, get the index of the album and store it on the spotifyAlbumId.
+			     * That way I have a 1-1 map of the albumId and the index. This should make saving easy
+			     */
+			    result.albumIndex[album.spotifyAlbumId] = {
+		            'album': album,
+		            'index': index
+			    };
+			    
+			});
+			
+			return result;
+		}
+		
 		// Save the albums to spotify
 		this.save = function(){
 			var deferred = $q.defer();
@@ -121,9 +163,6 @@
 			            albumIndex[spotifyAlbumId].album.added = true;
 			            RdioService.updateLibrary(albumIndex[spotifyAlbumId].album, albumIndex[spotifyAlbumId].index);
 			        })
-			        
-			        // Update the library
-                    $rootScope.$broadcast(LIBRARY_REFRESH);
 			        
 			        // Check to see if we need to save again
 			        if(albumIds.length > 0){
@@ -198,7 +237,6 @@
 				}.bind(this))['finally'](function(){
 					// Figure out when to update the countdown
 					if((countDown % 50) == 0 || countDown == 0){
-					    $rootScope.$broadcast(LIBRARY_REFRESH);
 					    $rootScope.$broadcast(SPOTIFY_REFRESH);
 					}
 					

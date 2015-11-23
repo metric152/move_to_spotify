@@ -4,6 +4,7 @@
 	Spotify.$inject = ['$rootScope', SPOTIFY_SERVICE, RDIO_SERVICE, '$log'];
 	
 	function Spotify($rootScope, SpotifyService, RdioService, $log){
+		var libInfo = null;
 		
 		// OAUTH dance with spotify
 		function goToSpotify(){
@@ -83,6 +84,14 @@
 		    return this.warn;
 		}
 		
+		function getAlbumCount(){
+			return SpotifyService.getPreflightInfo(true).albums;
+		}
+		
+		function getTrackCount(){
+			return SpotifyService.getPreflightInfo(true).tracks;
+		}
+		
 		function controller($scope){
 			this.checkStatus = checkStatus;
 			this.goToSpotify = goToSpotify
@@ -90,20 +99,21 @@
 			this.saveToSpotify = saveToSpotify;
 			this.updateDisplay = updateDisplay;
 			this.isSaveDisabled = isSaveDisabled;
+			this.getAlbumCount = getAlbumCount;
+			this.getTrackCount = getTrackCount;
 			this.connect = false;
 			this.search = false;
 			this.save = false;
 			this.warn = false;
-			this.albumCount = 0;
-			this.trackCount = 0;
+			
 			
 			this.SEARCH_SPOTIFY = "Search Spotify for Albums";
 			this.SAVE_SPOTIFY = "Save to Spotify";
 			
 			this.checkStatus();
-			this.updateDisplay();
+//			this.updateDisplay();
 			
-			$rootScope.$on(SPOTIFY_REFRESH, this.updateDisplay.bind(this));
+//			$rootScope.$on(SPOTIFY_REFRESH, this.updateDisplay.bind(this));
 		}
 		
 		return {
