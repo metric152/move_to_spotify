@@ -18,7 +18,6 @@
 			
 			// Go get albums
 			Service.getAlbums(reset).then(function(result){
-				$log.debug(result);
 				this.getLibrary = false;
 				this.connect = false;
 				this.getAgain = true;

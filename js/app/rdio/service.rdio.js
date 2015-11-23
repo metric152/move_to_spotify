@@ -4,8 +4,7 @@
 	Service.$inject = ['$rootScope', '$http', '$q', '$location', '$window', '$httpParamSerializer', '$timeout', 'localStorageService', '$log'];
 	
 	function Service($rootScope, $http, $q, $location, $window, $httpParamSerializer, $timeout, localStorageService, $log){
-		// http://www.rdio.com/developers/app/gml3vqymtzeuzcb77nakopz6hu/
-		var CLIENT_ID = "gml3vqymtzeuzcb77nakopz6hu";
+		var CLIENT_ID = RDIO_CLIENT_ID;
 		
 		var OAUTH_URI = "https://www.rdio.com/oauth2/authorize";
 		var ENDPOINT_URI = "https://services.rdio.com/api/1/";
@@ -145,8 +144,6 @@
 					var albums = response.data.result;
 					
 					addToLibrary(albums);
-					// Update the library listing
-//					$rootScope.$broadcast(LIBRARY_REFRESH);
 					
 					// Check to see if we need to run again
 					if(albums.length == sz){
@@ -163,8 +160,6 @@
 					}
 					
 				}.bind(this), function(response){
-					$log.debug(response);
-					
 					// Check for a bad token error
 					// http://www.rdio.com/developers/docs/web-service/oauth2/overview/ref-using-a-refresh-token
 					if(response.data.error == "invalid_token"){
@@ -193,12 +188,10 @@
 			
 			// Get a new token
 			$http.post('api.php', {'client':'rdio', 'task': 'refresh_token', 'clientId':CLIENT_ID, 'refresh_token':this.getToken().refresh_token}).then( function(response){
-				$log.debug(response);
 				// Set the new token here
 				this.setToken(response.data);
 				deferred.resolve();
 			}.bind(this), function(response){
-				$log.debug(response);
 				deferred.reject();
 			});
 			
@@ -240,7 +233,6 @@
 				// Resolve the promise
 				deferred.resolve();
 			}.bind(this), function(result){
-				$log.debug(result.data);
 				deferred.reject();
 			});
 			

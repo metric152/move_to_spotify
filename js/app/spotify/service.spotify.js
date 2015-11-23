@@ -4,8 +4,7 @@
 	Service.$inject = ['$rootScope', '$http', '$q', '$location', '$window', '$httpParamSerializer', '$timeout', 'localStorageService', RDIO_SERVICE, '$log'];
 	
 	function Service($rootScope, $http, $q, $location, $window, $httpParamSerializer, $timeout, localStorageService, RdioService, $log){
-		// https://developer.spotify.com/my-applications/#!/applications/2c2bff3442994bba939ef3fd04e0efce
-		var CLIENT_ID = "2c2bff3442994bba939ef3fd04e0efce";
+		var CLIENT_ID = SPOTIFY_CLIENT_ID;
 		
 		var OAUTH_URI = "https://accounts.spotify.com/authorize";
 		var ENDPOINT_URI = "https://api.spotify.com/";

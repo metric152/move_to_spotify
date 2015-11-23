@@ -10,6 +10,12 @@
 	// Redirect uri
 	REDIRECT_URI = "http://move.152.io";
 	
+	// Rdio Client ID: http://www.rdio.com/developers
+	RDIO_CLIENT_ID = "gml3vqymtzeuzcb77nakopz6hu";
+	
+	// Spotify CLient ID: https://developer.spotify.com/my-applications
+	SPOTIFY_CLIENT_ID = "2c2bff3442994bba939ef3fd04e0efce";
+	
 	MoveToSpotify.config(Configure);
 	
 	Configure.$inject = ['$locationProvider', '$compileProvider'];
