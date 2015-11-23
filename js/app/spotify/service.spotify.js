@@ -35,6 +35,29 @@
 			return result.access_token;
 		}
 		
+		// Make sure our token is good
+		this.checkAccessToken = function(){
+			var deferred = $q.defer();
+			// Create headers
+			var params = {
+				'headers': this.getAuthHeader()
+			};
+			
+			$http.get(ENDPOINT_URI + 'v1/me', params).then(deferred.resolve, function(response){
+				//  Check for expired token
+				if(response.data.error.message.indexOf("token expired") > -1){
+					this.getRefreshToken().then(function(response){
+						deferred.resolve();
+					}.bind(this), function(response){
+						alert('Issue getting refresh token');
+						deferred.reject();
+					}.bind(this));
+				}
+			}.bind(this));
+			
+			return deferred.promise;
+		}
+		
 		// Start the OAUTH dance
 		this.redirectToSpotify = function(){
 			$window.location.href = OAUTH_URI + '?' + $httpParamSerializer({
@@ -196,71 +219,58 @@
 			var deferred = $q.defer();
 			var library = RdioService.getLibrary();
 			var countDown = library.total;
-			
-			function search(album, index){
-				var params = {
-					'params':{
-						'type':'album',
-						'q': sprintf('album:%s artist:%s', album['name'], album['artist'])
-					},
-					'headers': this.getAuthHeader()
-				};
-				
-				// Search for the album
-				$http.get(ENDPOINT_URI + 'v1/search', params).then(function(response){
-					var searchResult = response.data.albums.items.pop();
-					countDown--;
-					
-					// Save the spotify id
-					if(searchResult){
-						album.spotifyAlbumId = searchResult.id;
-						album.spotifyLink = searchResult.uri;
-					}
-					else{
-					    // Used for markup control
-						album.notFound = true;
-					}
-					
-					// Update the library
-					RdioService.updateLibrary(album, index);
-					
-				}.bind(this), function(response){
-					//  Check for expired token
-					if(response.data.error.message.indexOf("token expired") > -1){
-						this.getRefreshToken().then(function(response){
-							search.call(this, album, index);
-						}.bind(this), function(response){
-							alert('Issue getting refresh token');
-							deferred.reject();
-						}.bind(this));
-					}
-				}.bind(this))['finally'](function(){
-					// Figure out when to update the countdown
-					if((countDown % 50) == 0 || countDown == 0){
-					    $rootScope.$broadcast(SPOTIFY_REFRESH);
-					}
-					
-					// Check to see if we need to check the next album
-					var nextIndex = ++index;
-					
-					if(countDown != 0){
-						search.call(this, library['albums'][nextIndex], nextIndex);
-					}
-					else{
-						// Now we're done
-						deferred.resolve();
-						localStorageService.set(SEARCHED, true);
-					}
-				}.bind(this));
-			}
+			var index = 0;
 			
 			// If we have no library just stop
-			if(!library) {
+			if(library.total == 0) {
 				deferred.reject("We don't have a library yet. Connect with Rdio and get your albums.");
 				return deferred.promise;
 			}
 			
-			search.call(this, library['albums'][0], 0);
+			// Check the token before making a request
+			this.checkAccessToken().then(function(){
+				
+				function search(album){
+					// Create headers
+					var params = {
+						'params':{
+							'type':'album',
+							'q': sprintf('album:%s artist:%s', album['name'], album['artist'])
+						},
+						'headers': this.getAuthHeader()
+					};
+					
+					// Search for the album
+					$http.get(ENDPOINT_URI + 'v1/search', params).then(function(response){
+						var searchResult = response.data.albums.items.pop();
+						countDown--;
+						
+						// Save the spotify id
+						if(searchResult){
+							album.spotifyAlbumId = searchResult.id;
+							album.spotifyLink = searchResult.uri;
+						}
+						else{
+						    // Used for markup control
+							album.notFound = true;
+						}
+						
+						if(countDown == 0){
+							// Update the library
+							RdioService.saveLibrary();
+							
+							// Now we're done
+							deferred.resolve();
+							localStorageService.set(SEARCHED, true);
+						}
+						else{
+							search.call(this, library.albums[++index]);
+						}
+					}.bind(this));
+				};
+				
+				search.call(this, library.albums[index]);
+			}.bind(this));
 			
 			return deferred.promise;
 		}

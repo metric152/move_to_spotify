@@ -63,27 +63,6 @@
 			}.bind(this));
 		}
 		
-		function updateDisplay(){
-		    var result = RdioService.getLibrary();
-		    if(!result) return;
-		    
-		    this.albumCount = 0;
-		    this.trackCount = 0;
-		    
-		    result.albums.forEach( function(album, index){
-		        if(album.spotifyAlbumId && !album.hasOwnProperty('selected')){
-		            this.albumCount++;
-		            this.trackCount += album.length;
-		        }
-		    }.bind(this));
-		}
-		
-		function isSaveDisabled(){
-		    this.warn = this.trackCount > 9900;
-		    
-		    return this.warn;
-		}
-		
 		function getAlbumCount(){
 			return SpotifyService.getPreflightInfo(true).albums;
 		}
@@ -104,7 +83,6 @@
 			this.goToSpotify = goToSpotify
 			this.searchSpotify = searchSpotify;
 			this.saveToSpotify = saveToSpotify;
-			this.isSaveDisabled = isSaveDisabled;
 			this.getAlbumCount = getAlbumCount;
 			this.getTrackCount = getTrackCount;
 			this.select = select;
@@ -113,16 +91,10 @@
 			this.save = false;
 			this.warn = false;
 			
-			this.updateDisplay = updateDisplay;
-			
-			
 			this.SEARCH_SPOTIFY = "Search Spotify for Albums";
 			this.SAVE_SPOTIFY = "Save to Spotify";
 			
 			this.checkStatus();
-//			this.updateDisplay();
-			
-//			$rootScope.$on(SPOTIFY_REFRESH, this.updateDisplay.bind(this));
 		}
 		
 		return {
