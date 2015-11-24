@@ -211,11 +211,17 @@
 				
 				function search(album){
 					var albumDate = new Date(album['releaseDate']).getFullYear();
+					var upcs = [];
+					album['upcs'].forEach(function(upc){
+						upcs.push("upc:"+upc);
+					});
+					
 					// Create headers
 					var params = {
 						'params':{
 							'type':'album',
-							'q': sprintf('album:%s artist:%s year:%s-%s', album['name'], album['artist'], albumDate - 1, albumDate)
+							'q': sprintf('album:%s artist:%s year:%s-%s', album['name'], album['artist'], albumDate - 1, albumDate + 1)
+//							'q': upcs.join(' OR ')
 						},
 						'headers': this.getAuthHeader()
 					};
