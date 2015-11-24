@@ -135,7 +135,7 @@
         }
         
         // Go get the albums
-        this.getAlbums = function(reset){
+        this.getAlbums = function(){
             var size = 307; // Make the number prime
             var offset = 0;
             var deferred = $q.defer();
@@ -172,6 +172,8 @@
                         albumsToAdd.forEach( function(album){
                             // Skip the album if we've added it
                             if(albumCache[sprintf('%s|%s', album.artist.trim(), album.name.trim())]) return;
+                            // If there is no release date it's just one track
+                            if(!album.releaseDate) return;
                             
                             // Record the album
                             albumCache[sprintf('%s|%s', album.artist.trim(), album.name.trim())] = true;
