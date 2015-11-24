@@ -7,7 +7,8 @@
     </div>
     <hr/>
     <div>
-        Display <label><input type="radio" name="order" ng-click="rdio.setOrder('old')" ng-checked="rdio.getOrder() == 'old'" /> Oldest First</label> <label><input type="radio" name="order" ng-click="rdio.setOrder('new')" ng-checked="rdio.getOrder() == 'new'"/>Newest First</label>
+        Display <label><input type="radio" name="order" ng-click="rdio.setOrder('old')" ng-checked="rdio.getOrder() == 'old'" /> Oldest First</label> <label><input type="radio" name="order" ng-click="rdio.setOrder('new')" ng-checked="rdio.getOrder() == 'new'"/>Newest First</label><br/>
+        <small>Determines the order the albums will be sent to Spotify</small>
     </div>
     <h4 class="detail">Albums ({{rdio.getAlbumCount()}})</h4>
     <h4 class="detail">Tracks ({{rdio.getTrackCount()}})</h4>
