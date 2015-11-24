@@ -1,14 +1,14 @@
 body {
-	font-family: arial;
+    font-family: arial;
 }
 
 h1.heading{
-	margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 h4.detail {
-	margin-top: 5px;
-	margin-bottom: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .warn{
@@ -31,60 +31,60 @@ h4.detail {
 }
 
 #rdio-library {
-	overflow: auto;
-	width: 100%;
-	height: calc(100% - 220px);
-	margin-bottom: 10px;
-	margin-top: 10px;
+    overflow: auto;
+    width: 100%;
+    height: calc(100% - 220px);
+    margin-bottom: 10px;
+    margin-top: 10px;
     position: relative;
     top: 220px;
 }
 
 #rdio-library .album{
-	float: left;
-	width: 250px;
-	min-height: 300px;
-	padding-bottom: 10px;
-	padding-right: 10px;
-	text-align: center;
+    float: left;
+    width: 250px;
+    min-height: 300px;
+    padding-bottom: 10px;
+    padding-right: 10px;
+    text-align: center;
 }
 
 #rdio-library .album-art.added,
 #rdio-library .album-art.not-found{
-	opacity: 0.25;
-	position: relative;
+    opacity: 0.25;
+    position: relative;
 }
 
 #rdio-library .album-art.added::before{
-	content: 'Added';
+    content: 'Added';
 }
 
 #rdio-library .album-art.not-found::before{
-	content: 'Not Found';
+    content: 'Not Found';
 }
 
 #rdio-library .album-art.added::before,
 #rdio-library .album-art.not-found::before{
-	position: absolute;
-	top: 10px;
-	left: 70px;
-	font-weight: bold;
-	color: ivory;
+    position: absolute;
+    top: 10px;
+    left: 70px;
+    font-weight: bold;
+    color: ivory;
 }
 
 #rdio-library .album .album-art{
-	min-height: 200px;
-	min-width: 200px;
-	padding-bottom: 5px;
-	position: relative;
+    min-height: 200px;
+    min-width: 200px;
+    padding-bottom: 5px;
+    position: relative;
 }
 
 #rdio-library .album .album-art .export{
-	position: absolute;
-	top: 10px;
-	left: 40px;
-	
-	/* All browsers except webkit*/
+    position: absolute;
+    top: 10px;
+    left: 40px;
+    
+    /* All browsers except webkit*/
       transform: scale(2);
 
       /* Webkit browsers*/
@@ -92,13 +92,13 @@ h4.detail {
 }
 
 #rdio-library .album .album-name{
-	font-weight: bold;
-	font-size: 0.9em;
+    font-weight: bold;
+    font-size: 0.9em;
 }
 
 #rdio-library .album .artist{
-	color: silver;
-	font-size: 0.8em;
+    color: silver;
+    font-size: 0.8em;
 }
 
 #rdio-library .album .app-link{
@@ -116,5 +116,5 @@ h4.detail {
 }
 
 #spotify button.save{
-	margin-bottom: 10px;
+    margin-bottom: 10px;
 }
