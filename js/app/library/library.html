@@ -1,9 +1,8 @@
 <div id="rdio-library">
-	<div id="filterbox" ng-show="lib.albums().albums.length">
+	<div id="filterbox" ng-if="lib.albums().total > 0">
 		Show only albums not found on Spotify: <input ng-change="lib.changeFilter()" ng-model="lib.onlyNotFound" type="checkbox">
-		<hr>
 	</div>
-
+	<hr>
 	<div class="album" ng-repeat="album in lib.albums().albums| filter:lib.albumFilter track by $index ">
 		<div class="album-art" ng-class="{'added': album.added, 'not-found': album.notFound}" ng-init="lib.loadArtwork($last)">
 			<label>

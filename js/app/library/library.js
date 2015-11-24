@@ -29,7 +29,14 @@
 			Service.saveLibrary();
 		}
 
-
+		this.changeFilter = function(){
+			if (this.onlyNotFound) {
+				this.albumFilter = {'notFound':true};
+			} else {
+				this.albumFilter = {};
+			}
+			loadArtwork(true);
+		};
 		
 		function controller($scope){
 			this.albumFilter = {};
@@ -37,14 +44,7 @@
 			this.save = save;
 			this.albums = Service.getLibrary;
 			this.loadArtwork = loadArtwork;
-
-			this.changeFilter = function(){
-				if (this.onlyNotFound) {
-					this.albumFilter = {'notFound':true};
-				} else {
-					this.albumFilter = {};
-				}
-			};
+			this.changeFilter = changeFilter;
 		}
 		
 		return {
