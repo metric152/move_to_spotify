@@ -23,6 +23,7 @@ h4.detail {
 #notes{
     float: left;
     width: 45%;
+    margin-left: 10px;
 }
 
 #rdio {
