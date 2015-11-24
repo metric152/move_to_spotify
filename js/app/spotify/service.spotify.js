@@ -270,7 +270,7 @@
 						nextAlbum.call(this, false);
 					}.bind(this), function(response){
 					    if(response.status == 429){
-					        deferred.reject('Too many searches right now');
+					        deferred.reject('Too many searches right now. Try again in a little bit.');
 					        stopSearching = true;
 					    }
 					}.bind(this));
