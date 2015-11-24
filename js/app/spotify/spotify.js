@@ -21,9 +21,9 @@
 				
 			}.bind(this), function(message){
 				if(message) alert(message);
-				
-				$event.target.disabled = false;
-				$event.target.innerText = this.SEARCH_SPOTIFY;
+			}.bind(this))['finally']( function(){
+			    $event.target.disabled = false;
+                $event.target.innerText = this.SEARCH_SPOTIFY;
 			}.bind(this));
 		}
 		
