@@ -1,8 +1,8 @@
 <div>
     <img class="logo"  src="images/spotify.jpg" /><br/>
     <button ng-click="spotify.goToSpotify()" ng-if="spotify.connect">Connect to Spotify</button>
-    <button ng-click="spotify.searchSpotify($event)" ng-if="spotify.search">{{spotify.SEARCH_SPOTIFY}}</button>
-    <div ng-if="spotify.save">
+    <button class="search" ng-click="spotify.searchSpotify($event)">{{spotify.SEARCH_SPOTIFY}}</button>
+    <div>
     	<button class="save" ng-click="spotify.saveToSpotify($event)">{{spotify.SAVE_SPOTIFY}}</button><br/> 
     	<label><input type="radio" name="selected" ng-click="spotify.select(true)" />All Albums</label>
     	<label><input type="radio" name="selected" ng-click="spotify.select(false)" />No Albums</label>

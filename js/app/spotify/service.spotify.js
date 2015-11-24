@@ -10,8 +10,6 @@
 		var ENDPOINT_URI = "https://api.spotify.com/";
 		
 		var TOKEN = 'spotify_token';
-		var SEARCHED = 'spotify_searched';
-		var FINISHED = 'spotify_finished';
 		
 		// Set the raw token
 		this.setToken = function(token){
@@ -196,7 +194,8 @@
 			var deferred = $q.defer();
 			var library = RdioService.getLibrary();
 			var index = 0;
-			var throttle = 250;
+			var throttle = 750;
+			var stopSearching = false;
 			
 			// If we have no library just stop
 			if(library.total == 0) {
@@ -206,8 +205,30 @@
 			
 			// Check the token before making a request
 			this.checkAccessToken().then(function(){
+			    
+			    function nextAlbum(now){
+			        // Get the next album
+                    var theNextAlbum = library.albums[++index];
+                    
+                    // If we don't have one we're finished
+                    if(!theNextAlbum){
+                        // Now we're done
+                        deferred.resolve();
+                    }
+                    else if(now){
+                        search.call(this, theNextAlbum);
+                    }
+                    else{
+                        // Throttle search
+                        $timeout(function(){
+                            search.call(this, theNextAlbum);
+                        }.bind(this), throttle);
+                    }
+			    }
 				
 				function search(album){
+				    if(stopSearching) return;
+				    
 					var albumDate = new Date(album['releaseDate']).getFullYear();
 					
 					// Create headers
@@ -219,10 +240,16 @@
 						'headers': this.getAuthHeader()
 					};
 					
+					// We found this album. Move to the next one
+					if(album.spotifyAlbumId || album.notFound){
+					    nextAlbum.call(this, true);
+					    return;
+					}
+					
 					// Search for the album
 					$http.get(ENDPOINT_URI + 'v1/search', params).then(function(response){
 						var searchResult = null;
-						var nextAlbum = null;
+
 						response.data.albums.items.forEach(function(result){
 							if(result.name == album['name']) searchResult = result;
 						});
@@ -240,24 +267,22 @@
 							album.notFound = true;
 						}
 						
-						// Get the next album
-						nextAlbum = library.albums[++index];
-						
-						// If we don't have one we're finished
-						if(!nextAlbum){
-							// Now we're done
-							deferred.resolve();
-						}
-						else{
-							// Throttle search
-							$timeout(function(){
-								search.call(this, nextAlbum);
-							}.bind(this), throttle);
-						}
+						nextAlbum.call(this, false);
+					}.bind(this), function(response){
+					    if(response.status == 429){
+					        deferred.reject('Too many searches right now');
+					        stopSearching = true;
+					    }
 					}.bind(this));
 				};
 				
+				// Use to trigger 429 error
+//				library.albums.forEach(function(album){
+//				    search.call(this, album);
+//				}.bind(this));
 				search.call(this, library.albums[index]);
+				
+				
 			}.bind(this));
 			
 			return deferred.promise;

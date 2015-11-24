@@ -15,13 +15,10 @@
 		function searchSpotify($event){
 			// Update the button
 			$event.target.disabled = true;
-			$event.target.innerText = 'Searching Spotify. Please wait.';
+			$event.target.innerText = 'Searching. Please wait.';
 			
 			SpotifyService.searchForAlbums().then(function(){
-				// Show the save button
-				this.save = true;
-				// Turn off search
-				this.search = false;
+				
 			}.bind(this), function(message){
 				if(message) alert(message);
 				
@@ -49,14 +46,7 @@
 		function checkStatus(){
 			SpotifyService.checkStatus().then(function(){
 			    
-			    // Check to see if we've searched
-			    if(SpotifyService.isSearched()){
-			        this.save = true;
-			    }
-			    else{
-			        // Start the search
-	                this.search = true;
-			    }
+			    
 			}.bind(this), function(){
 				// We don't have a token yet
 				this.connect = true;
@@ -87,12 +77,9 @@
 			this.getTrackCount = getTrackCount;
 			this.select = select;
 			this.connect = false;
-			this.search = false;
-			this.save = false;
-			this.warn = false;
 			
-			this.SEARCH_SPOTIFY = "Search Spotify for Albums";
-			this.SAVE_SPOTIFY = "Save to Spotify";
+			this.SEARCH_SPOTIFY = "Search for Albums";
+			this.SAVE_SPOTIFY = "Save Selected Albums";
 			
 			this.checkStatus();
 		}

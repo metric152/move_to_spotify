@@ -114,6 +114,7 @@ h4.detail {
     height: 65;
 }
 
-#spotify button.save{
+#spotify button.save,
+#spotify button.search{
 	margin-bottom: 10px;
 }
