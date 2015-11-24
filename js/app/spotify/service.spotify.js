@@ -157,7 +157,6 @@
 			
 			this.checkAccessToken().then(function(){
 				function save(){
-				    // Batch your saves to 5
 				    var spotifyAlbumIds = albumsToSave.spotifyAlbumIds.splice(0, batchNumber);
 				    
 				    $http.put(ENDPOINT_URI + 'v1/me/albums', spotifyAlbumIds, {'headers': this.getAuthHeader()}).then(function(){
@@ -196,7 +195,6 @@
 		this.searchForAlbums = function(){
 			var deferred = $q.defer();
 			var library = RdioService.getLibrary();
-			var countDown = library.total;
 			var index = 0;
 			var throttle = 250;
 			
@@ -211,17 +209,12 @@
 				
 				function search(album){
 					var albumDate = new Date(album['releaseDate']).getFullYear();
-					var upcs = [];
-					album['upcs'].forEach(function(upc){
-						upcs.push("upc:"+upc);
-					});
 					
 					// Create headers
 					var params = {
 						'params':{
 							'type':'album',
 							'q': sprintf('album:%s artist:%s year:%s-%s', album['name'], album['artist'], albumDate - 1, albumDate + 1)
-//							'q': upcs.join(' OR ')
 						},
 						'headers': this.getAuthHeader()
 					};
@@ -229,7 +222,7 @@
 					// Search for the album
 					$http.get(ENDPOINT_URI + 'v1/search', params).then(function(response){
 						var searchResult = null;
-						countDown--;
+						var nextAlbum = null;
 						response.data.albums.items.forEach(function(result){
 							if(result.name == album['name']) searchResult = result;
 						});
@@ -238,24 +231,27 @@
 						if(searchResult){
 							album.spotifyAlbumId = searchResult.id;
 							album.spotifyLink = searchResult.uri;
+							
+							// Update the library
+                            RdioService.saveLibrary();
 						}
 						else{
 						    // Used for markup control
 							album.notFound = true;
 						}
 						
-						if(countDown == 0){
-							// Update the library
-							RdioService.saveLibrary();
-							
+						// Get the next album
+						nextAlbum = library.albums[++index];
+						
+						// If we don't have one we're finished
+						if(!nextAlbum){
 							// Now we're done
 							deferred.resolve();
-							localStorageService.set(SEARCHED, true);
 						}
 						else{
 							// Throttle search
 							$timeout(function(){
-								search.call(this, library.albums[++index]);
+								search.call(this, nextAlbum);
 							}.bind(this), throttle);
 						}
 					}.bind(this));
