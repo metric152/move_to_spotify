@@ -1,5 +1,5 @@
 <div id="rdio-library">
-	<div id="filterbox">
+	<div id="filterbox" ng-show="lib.albums().albums.length">
 		Show only albums not found on Spotify: <input ng-change="lib.changeFilter()" ng-model="lib.onlyNotFound" type="checkbox">
 		<hr>
 	</div>
