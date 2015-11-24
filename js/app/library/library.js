@@ -1,5 +1,9 @@
 (function(){
 	MoveToSpotify.directive('library', Library);
+
+	MoveToSpotify.filter('encodeURIComponent', function() {
+			return window.encodeURIComponent;
+	});
 	
 	Library.$inject = ['$rootScope', RDIO_SERVICE, '$timeout','$log'];
 	

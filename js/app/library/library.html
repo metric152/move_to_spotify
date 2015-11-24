@@ -14,5 +14,7 @@
 		<div class="album-name">{{album.name}}</div>
 		<div class="artist">{{album.artist}}</div>
 				<div class="app-link" ng-if="album.spotifyLink"><a ng-href="{{album.spotifyLink}}">Open in Spotify</a></div>
+				<div class="app-link" ng-if="album.notFound"><a ng-href="spotify:search:{{album.artist | encodeURIComponent}}+{{album.name | encodeURIComponent}}">Search in Spotify</a></div>
+
 	</div>
 </div>
