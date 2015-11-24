@@ -1,13 +1,13 @@
 (function(){
     MoveToSpotify.directive('rdio', Rdio);
     
-    Rdio.$inject = [RDIO_SERVICE, '$log'];
+    Rdio.$inject = ['$rootScope', RDIO_SERVICE, '$log'];
     
-    function Rdio(Service, $log){
+    function Rdio($rootScope, RdioService, $log){
         
         // Go get the code
         function goToRdio(){
-            Service.redirectToRdio();
+            RdioService.redirectToRdio();
         }
         
         // Get the list of albums
@@ -17,7 +17,7 @@
             $event.target.innerText = "Getting albums. Please wait.";
             
             // Go get albums
-            Service.getAlbums().then(function(result){
+            RdioService.getAlbums().then(function(result){
                 this.getLibrary = true;
                 this.connect = false;
                 
@@ -29,7 +29,7 @@
         
         // Check to see if we've made a connection to rdio
         function checkStatus(){
-            Service.checkStatus().then(function(){
+            RdioService.checkStatus().then(function(){
                 // Allow the user to get the library again
                 this.getLibrary = true;
             }.bind(this), function(){
@@ -39,11 +39,11 @@
         }
         
         function getAlbumCount(){
-            return Service.getLibrary().total;
+            return RdioService.getLibrary().total;
         }
         
         function getTrackCount(){
-            var result = Service.getLibrary();
+            var result = RdioService.getLibrary();
             var trackCount = 0;
             
             // Get track count
@@ -54,12 +54,29 @@
             return trackCount;
         }
         
+        function setOrder(order){
+            RdioService.setOrder(order);
+            $rootScope.$broadcast(REFRESH_LIBRARY);
+        }
+        
+        function getOrder(){
+            return RdioService.getOrder();
+        }
+        
+        function resetLibrary(){
+            RdioService.resetLibrary();
+            RdioService.saveLibrary();
+        }
+        
         function controller($scope){
             this.checkStatus = checkStatus;
             this.goToRdio = goToRdio;
             this.getAlbums = getAlbums;
             this.getAlbumCount = getAlbumCount;
             this.getTrackCount = getTrackCount;
+            this.resetLibrary = resetLibrary;
+            this.setOrder = setOrder;
+            this.getOrder = getOrder;
             this.connect = false;
             this.getLibrary = false;
             

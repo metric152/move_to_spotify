@@ -15,6 +15,22 @@
         
         var albumLibrary = null;
         
+        this.setOrder = function(value){
+            // Bad value
+            if(['new','old'].indexOf(value) == -1) return;
+            if(value == this.getOrder()) return;
+            var lib = this.getLibrary();
+            
+            lib.albums = albumLibrary.albums.reverse();
+            lib.order = value;
+            this.saveLibrary();
+        }
+        
+        this.getOrder = function(){
+            var lib = this.getLibrary();
+            return lib.order;
+        }
+        
         // Set the raw token
         this.setToken = function(token){
             // Store the response
@@ -88,7 +104,7 @@
         }
         
         // Get the library
-        function getLibrary(){
+        this.getLibrary = function(){
             // If we have something return it right away
             if(albumLibrary) return albumLibrary;
             
@@ -98,19 +114,25 @@
             }
             // Return the default
             else{
-                albumLibrary = {'total': 0, 'albums':[]}
+                albumLibrary = {'total': 0, 'albums':[], 'order': 'new'}
             }
             
             return albumLibrary;
         }
-        this.getLibrary = getLibrary;
+        
+        this.resetLibrary = function(){
+            var lib = this.getLibrary();
+            
+            lib.total = 0;
+            lib.albums = [];
+            lib.order = 'new';
+        }
         
         // Save the library
-        function saveLibrary(){
+        this.saveLibrary = function(){
             // Store the results
             localStorageService.set(LIBRARY, albumLibrary);
         }
-        this.saveLibrary = saveLibrary;
         
         // Go get the albums
         this.getAlbums = function(reset){
@@ -135,9 +157,8 @@
                 $http.post(ENDPOINT_URI + 'getFavorites', data, params).then( function(response){
                     var albums = response.data.result;
                     var albumCache = {};
-                    var finalAlbumList = [];
+                    var lib = this.getLibrary();
                     
-                    // Save the results
                     albumsToAdd = albumsToAdd.concat(albums);
                     
                     // Check to see if we need to run again
@@ -145,7 +166,7 @@
                         getAlbums.call(this, off + sz, sz);
                     }
                     else{
-                        albumLibrary.total = 0;
+                        this.resetLibrary();
                         
                         // Look through the incoming albums
                         albumsToAdd.forEach( function(album){
@@ -154,17 +175,13 @@
                             
                             // Record the album
                             albumCache[sprintf('%s|%s', album.artist.trim(), album.name.trim())] = true;
-                            finalAlbumList.push(album);
+                            lib.albums.push(album);
                             
                             // Update the total
-                            albumLibrary.total++;
+                            lib.total++;
                         });
                         
-                        
-                        // Append the albums in the reverse order
-                        albumLibrary.albums = finalAlbumList.reverse();
-                        
-                        saveLibrary();
+                        this.saveLibrary();
                         
                         localStorageService.set(FINISHED, true);
                         

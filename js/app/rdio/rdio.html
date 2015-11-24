@@ -1,7 +1,14 @@
 <div>
     <img class="logo" src="images/rdio.jpg" /><br/>
     <button ng-click="rdio.goToRdio()" ng-if="rdio.connect">Connect to Rdio</button>
-    <button ng-click="rdio.getAlbums($event)" ng-if="rdio.getLibrary">{{rdio.GET_RDIO_LIB}}</button>
+    <div ng-if="rdio.getLibrary">
+        <button ng-click="rdio.getAlbums($event)">{{rdio.GET_RDIO_LIB}}</button>
+        <button ng-click="rdio.resetLibrary()">Reset Library</button>
+    </div>
+    <hr/>
+    <div>
+        Display <label><input type="radio" name="order" ng-click="rdio.setOrder('old')" ng-checked="rdio.getOrder() == 'old'" /> Oldest First</label> <label><input type="radio" name="order" ng-click="rdio.setOrder('new')" ng-checked="rdio.getOrder() == 'new'"/>Newest First</label>
+    </div>
     <h4 class="detail">Albums ({{rdio.getAlbumCount()}})</h4>
     <h4 class="detail">Tracks ({{rdio.getTrackCount()}})</h4>
 </div>

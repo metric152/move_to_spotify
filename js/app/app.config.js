@@ -3,6 +3,9 @@
     RDIO_SERVICE = 'rdioService';
     SPOTIFY_SERVICE = 'spotifyService';
     
+    // Events
+    REFRESH_LIBRARY = 'refresh-library';
+    
     // Redirect uri
     REDIRECT_URI = "http://move.152.io";
     

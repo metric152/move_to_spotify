@@ -33,11 +33,11 @@ h4.detail {
 #rdio-library {
     overflow: auto;
     width: 100%;
-    height: calc(100% - 220px);
+    height: calc(100% - 260px);
     margin-bottom: 10px;
     margin-top: 10px;
     position: relative;
-    top: 220px;
+    top: 260px;
 }
 
 #rdio-library .album{
