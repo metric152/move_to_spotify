@@ -122,7 +122,7 @@
 			// All requests are POST
 			// http://www.rdio.com/developers/docs/web-service/overview/
 			function getAlbums(off, sz){
-				var data = $httpParamSerializer({'method': 'getFavorites', 'start': off, 'count': sz, 'types':'tracksAndAlbums', 'extras':'-*,name,artist,icon,album,length'});
+				var data = $httpParamSerializer({'method': 'getFavorites', 'start': off, 'count': sz, 'types':'tracksAndAlbums', 'extras':'-*,name,artist,icon,album,length,releaseDate'});
 				var params = {
 					'headers': {
 						'content-type': undefined,
@@ -132,7 +132,7 @@
 				};
 				
 				// Go get the albums
-				$http.post(ENDPOINT_URI + 'getAlbumsInCollection', data, params).then( function(response){
+				$http.post(ENDPOINT_URI + 'getFavorites', data, params).then( function(response){
 					var albums = response.data.result;
 					var albumCache = {};
 					var finalAlbumList = [];

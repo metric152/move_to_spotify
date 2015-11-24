@@ -210,19 +210,23 @@
 			this.checkAccessToken().then(function(){
 				
 				function search(album){
+					var albumDate = new Date(album['releaseDate']).getFullYear();
 					// Create headers
 					var params = {
 						'params':{
 							'type':'album',
-							'q': sprintf('album:%s artist:%s', album['name'], album['artist'])
+							'q': sprintf('album:%s artist:%s year:%s-%s', album['name'], album['artist'], albumDate - 1, albumDate)
 						},
 						'headers': this.getAuthHeader()
 					};
 					
 					// Search for the album
 					$http.get(ENDPOINT_URI + 'v1/search', params).then(function(response){
-						var searchResult = response.data.albums.items.pop();
+						var searchResult = null;
 						countDown--;
+						response.data.albums.items.forEach(function(result){
+							if(result.name == album['name']) searchResult = result;
+						});
 						
 						// Save the spotify id
 						if(searchResult){
