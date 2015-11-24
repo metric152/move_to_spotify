@@ -1,5 +1,10 @@
 <div id="rdio-library">
-	<div class="album" ng-repeat="album in lib.albums().albums track by $index">
+	<div id="filterbox" ng-show="lib.albums().albums.length">
+		Show only albums not found on Spotify: <input ng-change="lib.changeFilter()" ng-model="lib.onlyNotFound" type="checkbox">
+		<hr>
+	</div>
+
+	<div class="album" ng-repeat="album in lib.albums().albums| filter:lib.albumFilter track by $index ">
 		<div class="album-art" ng-class="{'added': album.added, 'not-found': album.notFound}" ng-init="lib.loadArtwork($last)">
 			<label>
 				<input class="export" type="checkbox" ng-click="lib.save()" ng-model="album.selected" ng-disabled="album.added" ng-if="album.spotifyAlbumId" ng-checked="album.selected"/>
@@ -8,6 +13,8 @@
 		</div>
 		<div class="album-name">{{album.name}}</div>
 		<div class="artist">{{album.artist}}</div>
-        <div class="app-link" ng-if="album.spotifyLink"><a ng-href="{{album.spotifyLink}}">Open in Spotify</a></div>
+				<div class="app-link" ng-if="album.spotifyLink"><a ng-href="{{album.spotifyLink}}">Open in Spotify</a></div>
+				<div class="app-link" ng-if="album.notFound"><a ng-href="spotify:search:{{album.artist | encodeURIComponent}}+{{album.name | encodeURIComponent}}">Search in Spotify</a></div>
+
 	</div>
 </div>

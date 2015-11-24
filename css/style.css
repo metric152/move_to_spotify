@@ -12,21 +12,27 @@ h4.detail {
 }
 
 .warn{
-    color: red;
+		color: red;
 }
 
 #apps{
-    overflow: auto;
-    position: fixed;
+		overflow: auto;
+		position: fixed;
 }
 
 #notes{
-    float: left;
-    width: 45%;
+		float: left;
+		width: 45%;
+		margin-left:35px;
 }
 
 #rdio {
-    float: left;
+		float: left;
+		margin-left:25px;
+}
+
+#filterbox {
+	clear:both;margin:10px 25px;
 }
 
 #rdio-library {
@@ -35,8 +41,8 @@ h4.detail {
 	height: calc(100% - 220px);
 	margin-bottom: 10px;
 	margin-top: 10px;
-    position: relative;
-    top: 220px;
+		position: relative;
+		top: 220px;
 }
 
 #rdio-library .album{
@@ -84,10 +90,10 @@ h4.detail {
 	left: 40px;
 	
 	/* All browsers except webkit*/
-      transform: scale(2);
+			transform: scale(2);
 
-      /* Webkit browsers*/
-     -webkit-transform: scale(2);
+			/* Webkit browsers*/
+		 -webkit-transform: scale(2);
 }
 
 #rdio-library .album .album-name{
@@ -101,17 +107,17 @@ h4.detail {
 }
 
 #rdio-library .album .app-link{
-    font-size: 0.8em;
-    margin-top: 5px;
+		font-size: 0.8em;
+		margin-top: 5px;
 }
 
 #spotify{
-    float: left;
-    margin-left: 100px;
+		float: left;
+		margin-left: 100px;
 }
 
 #spotify img.logo{
-    height: 65;
+		height: 65;
 }
 
 #spotify button.save{
