@@ -5,7 +5,10 @@
     <button class="save" ng-click="spotify.saveToSpotify($event)" ng-bind-html="spotify.saveBtnTxt"></button>
     <hr/>
     <div>
-        <label><input type="checkbox" name="selected" ng-click="spotify.select($event)" />Select All Albums</label>
+        <label><input type="checkbox" ng-click="spotify.select($event)" />Select All Albums</label>
+    </div>
+    <div>
+        <label><input type="checkbox" ng-click="spotify.filterNotFound($event)" />Show Only Albums "Not Found"</label>
     </div>
     
     <h4 class="detail" ng-class="{'warn': spotify.warn}">Albums ({{spotify.getAlbumCount()}})</h4>

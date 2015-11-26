@@ -60,6 +60,11 @@
             LibraryService.selectAll($event.target.checked);
         }
         
+        function filterNotFound($event){
+            LibraryService.filterNotFound($event.target.checked);
+            $rootScope.$broadcast(REFRESH_LIBRARY);
+        }
+        
         function controller($scope){
             this.checkStatus = checkStatus;
             this.goToSpotify = goToSpotify
@@ -67,6 +72,7 @@
             this.saveToSpotify = saveToSpotify;
             this.getAlbumCount = getAlbumCount;
             this.getTrackCount = getTrackCount;
+            this.filterNotFound = filterNotFound;
             this.select = select;
             this.connect = false;
             

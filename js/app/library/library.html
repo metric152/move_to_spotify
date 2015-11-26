@@ -1,5 +1,5 @@
 <div id="rdio-library">
-    <div class="album" ng-repeat="album in lib.albums().albums track by $index">
+    <div class="album" ng-repeat="album in lib.albums().albums | filter:lib.getFilters() track by $index">
         <div class="album-art" ng-class="{'added': album.added, 'not-found': album.notFound}" ng-init="lib.loadArtwork($last)">
             <label>
                 <button class="add-one" title="Add this Album Right Now" ng-if="album.spotifyLink" ng-disabled="album.added" ng-click="lib.immediateAdd(album)"><i class="fa fa-plus-circle fa-2x"></i></button>

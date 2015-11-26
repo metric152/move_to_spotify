@@ -5,9 +5,11 @@
     
     function Service($rootScope, $http, $q, $location, $window, $httpParamSerializer, localStorageService, $log){
         var albumLibrary = null;
+        var albumFilter = {};
         
         var LIBRARY = 'library';
         var FINISHED = 'library_ready';
+        
         
         this.setOrder = function(value){
             // Bad value
@@ -43,6 +45,21 @@
                 album.selected = checked;
             })
             this.saveLibrary();
+        }
+        
+        // Display only found albums
+        this.filterNotFound = function(checked){
+            if(checked){
+                albumFilter = {'notFound':checked};
+            }
+            else{
+                delete albumFilter.notFound;
+            }
+        }
+        
+        // Get the album filter
+        this.getFilters = function(){
+            return albumFilter;
         }
         
         // Get the library

@@ -58,6 +58,7 @@
             this.spotifySearch = spotifySearch;
             this.loadArtwork = loadArtwork;
             this.immediateAdd = immediateAdd;
+            this.getFilters = LibraryService.getFilters;
             
             $rootScope.$on(REFRESH_LIBRARY,loadArtwork);
         }
