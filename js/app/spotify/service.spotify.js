@@ -139,6 +139,31 @@
             return result;
         }
         
+        // Save just one album to spotify
+        this.saveToSpotify = function(album){
+            var deferred = $q.defer();
+            
+            this.checkAccessToken().then(function(){
+                
+                // Save the album
+                $http.put(ENDPOINT_URI + 'v1/me/albums', [album.spotifyAlbumId], {'headers': this.getAuthHeader()}).then(function(){
+                    // Mark the album as added
+                    album.added = true;
+                    // Save the changes
+                    LibraryService.saveLibrary();
+                    deferred.resolve("Album Saved");
+                }.bind(this), function(response){
+                    // We hit the album limit
+                    if(response.data.error.message.indexOf("limit exceeded") > -1){
+                        deferred.reject("I can't add anymore albums.");
+                    }
+                });
+                
+            }.bind(this));
+            
+            return deferred.promise;
+        }
+        
         // Save the albums to spotify
         this.save = function(){
             var deferred = $q.defer();

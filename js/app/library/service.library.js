@@ -36,6 +36,15 @@
             return (result && result === true);
         }
         
+        // Select all of the albums
+        this.selectAll = function(checked){
+            this.getLibrary().albums.forEach(function(album){
+                if(album.added) return;
+                album.selected = checked;
+            })
+            this.saveLibrary();
+        }
+        
         // Get the library
         this.getLibrary = function(){
             // If we have something return it right away

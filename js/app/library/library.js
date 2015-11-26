@@ -1,9 +1,9 @@
 (function(){
     MoveToSpotify.directive('library', Library);
     
-    Library.$inject = ['$rootScope', LIBRARY_SERVICE, '$timeout','$log'];
+    Library.$inject = ['$rootScope', LIBRARY_SERVICE, SPOTIFY_SERVICE, '$timeout','$log'];
     
-    function Library($rootScope, LibraryService, $timeout, $log){
+    function Library($rootScope, LibraryService, SpotifyService, $timeout, $log){
         var bLazy = null;
         
         // Listen for the last element to be drawn then run the plugin
@@ -30,15 +30,34 @@
         }
         
         // Add or remove the album from export
-        function save(){
+        function save(album){
+            if(!album.selected){
+                album.selected = true;
+            }
+            else{
+                delete album.selected;
+            }
+            
             // Update the library
             LibraryService.saveLibrary();
+        }
+        
+        // Add the album right away
+        function immediateAdd(album){
+            SpotifyService.saveToSpotify(album).then(alert, alert);
+        }
+        
+        // Create a link that will search for the album in spotify
+        function spotifySearch(album){
+            return sprintf("spotify:search:%s+%s", window.encodeURIComponent(album.artist), window.encodeURIComponent(album.name));
         }
         
         function controller($scope){
             this.save = save;
             this.albums = LibraryService.getLibrary;
+            this.spotifySearch = spotifySearch;
             this.loadArtwork = loadArtwork;
+            this.immediateAdd = immediateAdd;
             
             $rootScope.$on(REFRESH_LIBRARY,loadArtwork);
         }

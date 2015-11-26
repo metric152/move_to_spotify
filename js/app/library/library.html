@@ -2,12 +2,16 @@
     <div class="album" ng-repeat="album in lib.albums().albums track by $index">
         <div class="album-art" ng-class="{'added': album.added, 'not-found': album.notFound}" ng-init="lib.loadArtwork($last)">
             <label>
-                <input class="export" type="checkbox" ng-click="lib.save()" ng-model="album.selected" ng-disabled="album.added" ng-if="album.spotifyAlbumId" ng-checked="album.selected"/>
+                <button class="add-one" title="Add this Album Right Now" ng-if="album.spotifyLink" ng-disabled="album.added" ng-click="lib.immediateAdd(album)"><i class="fa fa-plus-circle fa-2x"></i></button>
+                <button class="export" title="Select this Album for Bulk Add" ng-if="album.spotifyLink" ng-disabled="album.added" ng-click="lib.save(album)"><i class="fa fa-2x" ng-class="{'fa-check-square-o': album.selected, 'fa-square-o ': !album.selected}"></i></button>
                 <img alt="{{album.name}} - {{album.artist}}" class="b-lazy" src="images/loading.gif" data-blazy="{{album.icon}}" />
             </label>
         </div>
         <div class="album-name">{{album.name}}</div>
         <div class="artist">{{album.artist}}</div>
-        <div class="app-link" ng-if="album.spotifyLink"><a ng-href="{{album.spotifyLink}}">Open in Spotify</a></div>
+        <div class="app-link" >
+            <a ng-href="{{lib.spotifySearch(album)}}" title="Search Spotify for album"><i class="fa fa-search fa-lg"></i></a>
+            <a ng-if="album.spotifyLink" ng-href="{{album.spotifyLink}}" title="Open in Spotify"><i class="fa fa-external-link fa-lg"></i></a>
+        </div>
     </div>
 </div>

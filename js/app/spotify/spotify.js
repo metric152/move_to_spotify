@@ -32,7 +32,7 @@
             this.saveBtnTxt = "Saving to Spotify. Please wait <i class='fa fa-spinner fa-pulse'></i>";
             
             SpotifyService.save().then(alert, alert)['finally']( function(){
-                this.saveBtnTxt = this.SAVE_SPOTIFY;
+                this.saveBtnTxt = SAVE_SPOTIFY;
                 $event.target.disabled = false;
             }.bind(this));
         }
@@ -56,11 +56,8 @@
             return SpotifyService.getPreflightInfo(true).tracks;
         }
         
-        function select(checked){
-            LibraryService.getLibrary().albums.forEach(function(album){
-                album.selected = checked;
-            })
-            LibraryService.saveLibrary();
+        function select($event){
+            LibraryService.selectAll($event.target.checked);
         }
         
         function controller($scope){
