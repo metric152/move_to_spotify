@@ -59,6 +59,7 @@
         
         // Display only albums not added yet
         this.filterNotAdded = function(checked){
+            // How to filter: https://docs.angularjs.org/api/ng/filter/filter
             if(checked){
                 albumFilter.added = "!";
             }
