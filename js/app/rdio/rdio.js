@@ -4,7 +4,7 @@
     Rdio.$inject = ['$rootScope', '$sce', RDIO_SERVICE, LIBRARY_SERVICE, '$log'];
     
     function Rdio($rootScope, $sce, RdioService, LibraryService, $log){
-        var GET_RDIO_LIB = "Get Rdio Albums";
+        var GET_RDIO_LIB = 'Get Rdio Albums <i class="fa fa-download"></i>';
         
         // Go get the code
         function goToRdio(){

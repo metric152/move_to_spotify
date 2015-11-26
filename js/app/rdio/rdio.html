@@ -3,7 +3,7 @@
     <button ng-click="rdio.goToRdio()" ng-if="rdio.connect">Connect to Rdio</button>
     <div ng-if="rdio.getLibrary">
         <button ng-click="rdio.getAlbums($event)" ng-bind-html="rdio.btnTxt"></button>
-        <button ng-click="rdio.resetLibrary()">Reset Library</button>
+        <button ng-click="rdio.resetLibrary()">Reset Library <i class="fa fa-refresh"></i></button>
     </div>
     <hr/>
     <div>

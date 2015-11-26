@@ -133,3 +133,7 @@ h4.detail {
 #spotify img.logo{
     height: 65;
 }
+
+#spotify label.filter {
+    font-size: 0.9em;
+}

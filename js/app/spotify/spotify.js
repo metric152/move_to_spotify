@@ -6,8 +6,8 @@
     function Spotify($rootScope, SpotifyService, LibraryService, $log){
         var libInfo = null;
         
-        var SEARCH_SPOTIFY = "Search for Albums";
-        var SAVE_SPOTIFY = "Save Selected Albums";
+        var SEARCH_SPOTIFY = 'Search for Albums <i class="fa fa-search"></i>';
+        var SAVE_SPOTIFY = 'Save Selected Albums <i class="fa fa-upload"></i>';
         
         // OAUTH dance with spotify
         function goToSpotify(){
@@ -56,8 +56,8 @@
             return SpotifyService.getPreflightInfo(true).tracks;
         }
         
-        function select($event){
-            LibraryService.selectAll($event.target.checked);
+        function select(selected){
+            LibraryService.selectAll(selected);
         }
         
         function filterNotFound($event){
