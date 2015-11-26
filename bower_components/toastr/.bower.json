@@ -1,0 +1,35 @@
+{
+  "name": "toastr",
+  "authors": [
+    "Timothy Ferrell <timothyferrell@gmail.com>"
+  ],
+  "main": "src/toastr.js",
+  "moduleType": [
+    "amd",
+    "es6",
+    "globals"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "closure-compiler": "http://dl.google.com/closure-compiler/compiler-latest.zip"
+  },
+  "homepage": "https://github.com/CodeSeven/toastr",
+  "_release": "77a41c0e2e",
+  "_resolution": {
+    "type": "branch",
+    "branch": "v3",
+    "commit": "77a41c0e2e8cf2e56aa917f6fc1c8cc7096709aa"
+  },
+  "_source": "https://github.com/CodeSeven/toastr.git",
+  "_target": "v3",
+  "_originalSource": "https://github.com/CodeSeven/toastr.git",
+  "_direct": true
+}

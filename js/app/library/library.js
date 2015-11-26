@@ -1,9 +1,9 @@
 (function(){
     MoveToSpotify.directive('library', Library);
     
-    Library.$inject = ['$rootScope', LIBRARY_SERVICE, SPOTIFY_SERVICE, '$timeout','$log'];
+    Library.$inject = ['$rootScope', LIBRARY_SERVICE, SPOTIFY_SERVICE, NOTIFICATION_SERVICE, '$timeout','$log'];
     
-    function Library($rootScope, LibraryService, SpotifyService, $timeout, $log){
+    function Library($rootScope, LibraryService, SpotifyService, NotificationService, $timeout, $log){
         var bLazy = null;
         
         // Listen for the last element to be drawn then run the plugin
@@ -44,7 +44,7 @@
         
         // Add the album right away
         function immediateAdd(album){
-            SpotifyService.saveToSpotify(album).then(alert, alert);
+            SpotifyService.saveToSpotify(album).then(NotificationService.success, NotificationService.error);
         }
         
         // Create a link that will search for the album in spotify

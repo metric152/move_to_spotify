@@ -1,0 +1,13 @@
+{
+  "name": "closure-compiler",
+  "_cacheHeaders": {
+    "ETag": "\"8372d\"",
+    "Last-Modified": "Fri, 16 Oct 2015 21:00:00 GMT",
+    "Content-Length": "5819570",
+    "Content-Type": "application/zip"
+  },
+  "_release": "e-tag:8372d",
+  "_source": "http://dl.google.com/closure-compiler/compiler-latest.zip",
+  "_target": "*",
+  "_originalSource": "http://dl.google.com/closure-compiler/compiler-latest.zip"
+}

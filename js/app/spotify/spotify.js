@@ -1,9 +1,9 @@
 (function(){
     MoveToSpotify.directive('spotify', Spotify);
     
-    Spotify.$inject = ['$rootScope', SPOTIFY_SERVICE, LIBRARY_SERVICE, '$log'];
+    Spotify.$inject = ['$rootScope', SPOTIFY_SERVICE, LIBRARY_SERVICE, NOTIFICATION_SERVICE, '$log'];
     
-    function Spotify($rootScope, SpotifyService, LibraryService, $log){
+    function Spotify($rootScope, SpotifyService, LibraryService, NotificationService, $log){
         var libInfo = null;
         
         var SEARCH_SPOTIFY = 'Search for Albums <i class="fa fa-search"></i>';
@@ -20,7 +20,7 @@
             $event.target.disabled = true;
             this.btnTxt = "Searching. Please wait <i class='fa fa-spinner fa-pulse'></i>";
             
-            SpotifyService.searchForAlbums().then(alert, alert)['finally']( function(){
+            SpotifyService.searchForAlbums().then(NotificationService.success, NotificationService.error)['finally']( function(){
                 $event.target.disabled = false;
                 this.btnTxt = SEARCH_SPOTIFY;
             }.bind(this));
@@ -31,7 +31,7 @@
             $event.target.disabled = true;
             this.saveBtnTxt = "Saving to Spotify. Please wait <i class='fa fa-spinner fa-pulse'></i>";
             
-            SpotifyService.save().then(alert, alert)['finally']( function(){
+            SpotifyService.save().then(NotificationService.success, NotificationService.error)['finally']( function(){
                 this.saveBtnTxt = SAVE_SPOTIFY;
                 $event.target.disabled = false;
             }.bind(this));

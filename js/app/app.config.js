@@ -3,6 +3,7 @@
     RDIO_SERVICE = 'rdioService';
     SPOTIFY_SERVICE = 'spotifyService';
     LIBRARY_SERVICE = 'libraryService';
+    NOTIFICATION_SERVICE = 'notificationService';
     
     // Events
     REFRESH_LIBRARY = 'refresh-library';

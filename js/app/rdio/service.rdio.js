@@ -55,7 +55,7 @@
                         // We've got a new token. Try again
                         deferred.resolve();
                     }.bind(this), function(){
-                        alert('Error getting refresh token');
+                        $log.debug('Error getting refresh token');
                         deferred.reject();
                     }.bind(this));
                 }

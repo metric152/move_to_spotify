@@ -47,7 +47,7 @@
                     this.getRefreshToken().then(function(response){
                         deferred.resolve();
                     }.bind(this), function(response){
-                        alert('Issue getting refresh token');
+                        $log.debug('Issue getting refresh token');
                         deferred.reject();
                     }.bind(this));
                 }
