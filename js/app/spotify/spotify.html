@@ -7,10 +7,13 @@
     <div>
         <label><input type="checkbox" ng-click="spotify.select($event)" />Select All Albums</label>
     </div>
+    <hr/>
     <div>
-        <label><input type="checkbox" ng-click="spotify.filterNotFound($event)" />Show Only Albums "Not Found"</label>
+        <label><input type="checkbox" ng-click="spotify.filterNotFound($event)" />Show Only Albums "Not Found"</label>        
     </div>
-    
+    <div>
+        <label><input type="checkbox" ng-click="spotify.filterNotAdded($event)"/>Show Only Albums "Not Added Yet"</label>
+    </div>
     <h4 class="detail" ng-class="{'warn': spotify.warn}">Albums ({{spotify.getAlbumCount()}})</h4>
     <h4 class="detail" ng-class="{'warn': spotify.warn}">Tracks ({{spotify.getTrackCount()}})</h4>
 </div>

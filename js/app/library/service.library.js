@@ -50,10 +50,20 @@
         // Display only found albums
         this.filterNotFound = function(checked){
             if(checked){
-                albumFilter = {'notFound':checked};
+                albumFilter.notFound = true;
             }
             else{
                 delete albumFilter.notFound;
+            }
+        }
+        
+        // Display only albums not added yet
+        this.filterNotAdded = function(checked){
+            if(checked){
+                albumFilter.added = "!";
+            }
+            else{
+                delete albumFilter.added;
             }
         }
         
