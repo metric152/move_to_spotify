@@ -1,9 +1,10 @@
 (function(){
     MoveToSpotify.directive('rdio', Rdio);
     
-    Rdio.$inject = ['$rootScope', RDIO_SERVICE, '$log'];
+    Rdio.$inject = ['$rootScope', '$sce', RDIO_SERVICE, LIBRARY_SERVICE, '$log'];
     
-    function Rdio($rootScope, RdioService, $log){
+    function Rdio($rootScope, $sce, RdioService, LibraryService, $log){
+        var GET_RDIO_LIB = "Get Rdio Albums";
         
         // Go get the code
         function goToRdio(){
@@ -14,7 +15,7 @@
         function getAlbums($event){
             // Update button
             $event.target.disabled = true;
-            $event.target.innerText = "Getting albums. Please wait.";
+            this.btnTxt = "Getting albums. Please wait <i class='fa fa-spinner fa-pulse'></i>";
             
             // Go get albums
             RdioService.getAlbums().then(function(result){
@@ -23,7 +24,7 @@
                 
             }.bind(this))['finally']( function(){
                 $event.target.disabled = false;
-                $event.target.innerText = this.GET_RDIO_LIB;
+                this.btnTxt = GET_RDIO_LIB;
             }.bind(this));
         }
         
@@ -39,11 +40,11 @@
         }
         
         function getAlbumCount(){
-            return RdioService.getLibrary().total;
+            return LibraryService.getLibrary().total;
         }
         
         function getTrackCount(){
-            var result = RdioService.getLibrary();
+            var result = LibraryService.getLibrary();
             var trackCount = 0;
             
             // Get track count
@@ -55,17 +56,17 @@
         }
         
         function setOrder(order){
-            RdioService.setOrder(order);
+            LibraryService.setOrder(order);
             $rootScope.$broadcast(REFRESH_LIBRARY);
         }
         
         function getOrder(){
-            return RdioService.getOrder();
+            return LibraryService.getOrder();
         }
         
         function resetLibrary(){
-            RdioService.resetLibrary();
-            RdioService.saveLibrary();
+            LibraryService.resetLibrary();
+            LibraryService.saveLibrary();
         }
         
         function controller($scope){
@@ -80,7 +81,7 @@
             this.connect = false;
             this.getLibrary = false;
             
-            this.GET_RDIO_LIB = "Get Rdio Albums";
+            this.btnTxt = GET_RDIO_LIB;
             
             this.checkStatus();
         }

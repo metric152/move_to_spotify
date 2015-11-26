@@ -1,9 +1,9 @@
 (function(){
     MoveToSpotify.service(SPOTIFY_SERVICE, Service);
     
-    Service.$inject = ['$rootScope', '$http', '$q', '$location', '$window', '$httpParamSerializer', '$timeout', 'localStorageService', RDIO_SERVICE, '$log'];
+    Service.$inject = ['$rootScope', '$http', '$q', '$location', '$window', '$httpParamSerializer', '$timeout', 'localStorageService', LIBRARY_SERVICE, '$log'];
     
-    function Service($rootScope, $http, $q, $location, $window, $httpParamSerializer, $timeout, localStorageService, RdioService, $log){
+    function Service($rootScope, $http, $q, $location, $window, $httpParamSerializer, $timeout, localStorageService, LibraryService, $log){
         var CLIENT_ID = SPOTIFY_CLIENT_ID;
         
         var OAUTH_URI = "https://accounts.spotify.com/authorize";
@@ -100,7 +100,7 @@
         // Get info about the current album selection
         this.getPreflightInfo = function(all){
             all = (typeof all == "boolean" ? all : false);
-            var library = RdioService.getLibrary();
+            var library = LibraryService.getLibrary();
             var result = {
                 'spotifyAlbumIds': [],
                 'albumIndex': {},
@@ -142,7 +142,7 @@
         // Save the albums to spotify
         this.save = function(){
             var deferred = $q.defer();
-            var library = RdioService.getLibrary();
+            var library = LibraryService.getLibrary();
             var albumIds = [];
             var albumIndex = {};
             var albumsToSave = this.getPreflightInfo();
@@ -165,14 +165,14 @@
                         });
                         
                         // Save our progress
-                        RdioService.saveLibrary();
+                        LibraryService.saveLibrary();
                         
                         // Check to see if we need to save again
                         if(albumsToSave.spotifyAlbumIds.length > 0){
                             save.call(this);
                         }
                         else{
-                            deferred.resolve();
+                            deferred.resolve("Albums saved to Spotify");
                         }
                     }.bind(this), function(response){
                         // We hit the album limit
@@ -192,7 +192,7 @@
         // Search for albums
         this.searchForAlbums = function(){
             var deferred = $q.defer();
-            var library = RdioService.getLibrary();
+            var library = LibraryService.getLibrary();
             var index = 0;
             var throttle = 750;
             var stopSearching = false;
@@ -213,7 +213,7 @@
                     // If we don't have one we're finished
                     if(!theNextAlbum){
                         // Now we're done
-                        deferred.resolve();
+                        deferred.resolve("Done searching Spotify");
                     }
                     else if(now){
                         search.call(this, theNextAlbum);
@@ -260,7 +260,7 @@
                             album.spotifyLink = searchResult.uri;
                             
                             // Update the library
-                            RdioService.saveLibrary();
+                            LibraryService.saveLibrary();
                         }
                         else{
                             // Used for markup control

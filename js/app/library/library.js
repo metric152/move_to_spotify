@@ -1,14 +1,14 @@
 (function(){
     MoveToSpotify.directive('library', Library);
     
-    Library.$inject = ['$rootScope', RDIO_SERVICE, '$timeout','$log'];
+    Library.$inject = ['$rootScope', LIBRARY_SERVICE, '$timeout','$log'];
     
-    function Library($rootScope, RdioService, $timeout, $log){
+    function Library($rootScope, LibraryService, $timeout, $log){
         var bLazy = null;
         
         // Listen for the last element to be drawn then run the plugin
         function loadArtwork($last){
-            if(!$last || !RdioService.isLibraryAvaliable()) return;
+            if(!$last || !LibraryService.isLibraryAvaliable()) return;
             
             // Image loading
             if(bLazy){
@@ -32,12 +32,12 @@
         // Add or remove the album from export
         function save(){
             // Update the library
-            RdioService.saveLibrary();
+            LibraryService.saveLibrary();
         }
         
         function controller($scope){
             this.save = save;
-            this.albums = RdioService.getLibrary;
+            this.albums = LibraryService.getLibrary;
             this.loadArtwork = loadArtwork;
             
             $rootScope.$on(REFRESH_LIBRARY,loadArtwork);

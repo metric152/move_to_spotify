@@ -2,6 +2,7 @@
     // Services
     RDIO_SERVICE = 'rdioService';
     SPOTIFY_SERVICE = 'spotifyService';
+    LIBRARY_SERVICE = 'libraryService';
     
     // Events
     REFRESH_LIBRARY = 'refresh-library';

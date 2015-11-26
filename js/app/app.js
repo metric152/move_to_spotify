@@ -1,5 +1,5 @@
 (function(){
-    MoveToSpotify = angular.module('MoveToSpotify', ['LocalStorageModule']);
+    MoveToSpotify = angular.module('MoveToSpotify', ['LocalStorageModule', 'ngSanitize']);
     
     MoveToSpotify.run(runConfig);
     MoveToSpotify.$inject = [];

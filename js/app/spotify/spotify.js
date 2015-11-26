@@ -1,10 +1,13 @@
 (function(){
     MoveToSpotify.directive('spotify', Spotify);
     
-    Spotify.$inject = ['$rootScope', SPOTIFY_SERVICE, RDIO_SERVICE, '$log'];
+    Spotify.$inject = ['$rootScope', SPOTIFY_SERVICE, LIBRARY_SERVICE, '$log'];
     
-    function Spotify($rootScope, SpotifyService, RdioService, $log){
+    function Spotify($rootScope, SpotifyService, LibraryService, $log){
         var libInfo = null;
+        
+        var SEARCH_SPOTIFY = "Search for Albums";
+        var SAVE_SPOTIFY = "Save Selected Albums";
         
         // OAUTH dance with spotify
         function goToSpotify(){
@@ -15,29 +18,21 @@
         function searchSpotify($event){
             // Update the button
             $event.target.disabled = true;
-            $event.target.innerText = 'Searching. Please wait.';
+            this.btnTxt = "Searching. Please wait <i class='fa fa-spinner fa-pulse'></i>";
             
-            SpotifyService.searchForAlbums().then(function(){
-                
-            }.bind(this), function(message){
-                if(message) alert(message);
-            }.bind(this))['finally']( function(){
+            SpotifyService.searchForAlbums().then(alert, alert)['finally']( function(){
                 $event.target.disabled = false;
-                $event.target.innerText = this.SEARCH_SPOTIFY;
+                this.btnTxt = SEARCH_SPOTIFY;
             }.bind(this));
         }
         
         function saveToSpotify($event){
             // Update the button
             $event.target.disabled = true;
-            $event.target.innerText = "Saving to Spotify. Please wait";
+            this.saveBtnTxt = "Saving to Spotify. Please wait <i class='fa fa-spinner fa-pulse'></i>";
             
-            SpotifyService.save().then(function(){
-                $event.target.innerText = "Albums Saved to Spotify";
-            }.bind(this), function(message){
-                alert(message);
-                $event.target.innerText = this.SAVE_SPOTIFY;
-            }.bind(this))['finally']( function(){
+            SpotifyService.save().then(alert, alert)['finally']( function(){
+                this.saveBtnTxt = this.SAVE_SPOTIFY;
                 $event.target.disabled = false;
             }.bind(this));
         }
@@ -62,10 +57,10 @@
         }
         
         function select(checked){
-            RdioService.getLibrary().albums.forEach(function(album){
+            LibraryService.getLibrary().albums.forEach(function(album){
                 album.selected = checked;
             })
-            RdioService.saveLibrary();
+            LibraryService.saveLibrary();
         }
         
         function controller($scope){
@@ -78,8 +73,8 @@
             this.select = select;
             this.connect = false;
             
-            this.SEARCH_SPOTIFY = "Search for Albums";
-            this.SAVE_SPOTIFY = "Save Selected Albums";
+            this.btnTxt = SEARCH_SPOTIFY;
+            this.saveBtnTxt = SAVE_SPOTIFY;
             
             this.checkStatus();
         }

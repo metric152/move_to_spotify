@@ -1,35 +1,15 @@
 (function(){
     MoveToSpotify.service(RDIO_SERVICE, Service);
     
-    Service.$inject = ['$rootScope', '$http', '$q', '$location', '$window', '$httpParamSerializer', 'localStorageService', '$log'];
+    Service.$inject = ['$rootScope', '$http', '$q', '$location', '$window', '$httpParamSerializer', LIBRARY_SERVICE, 'localStorageService', '$log'];
     
-    function Service($rootScope, $http, $q, $location, $window, $httpParamSerializer, localStorageService, $log){
+    function Service($rootScope, $http, $q, $location, $window, $httpParamSerializer, LibraryService, localStorageService, $log){
         var CLIENT_ID = RDIO_CLIENT_ID;
         
         var OAUTH_URI = "https://www.rdio.com/oauth2/authorize";
         var ENDPOINT_URI = "https://services.rdio.com/api/1/";
         
         var TOKEN = 'rdio_token';
-        var LIBRARY = 'library';
-        var FINISHED = 'rdio_finished';
-        
-        var albumLibrary = null;
-        
-        this.setOrder = function(value){
-            // Bad value
-            if(['new','old'].indexOf(value) == -1) return;
-            if(value == this.getOrder()) return;
-            var lib = this.getLibrary();
-            
-            lib.albums = albumLibrary.albums.reverse();
-            lib.order = value;
-            this.saveLibrary();
-        }
-        
-        this.getOrder = function(){
-            var lib = this.getLibrary();
-            return lib.order;
-        }
         
         // Set the raw token
         this.setToken = function(token){
@@ -96,44 +76,6 @@
             });
         }
         
-        // Check to see if the library is avaliable
-        this.isLibraryAvaliable = function(){
-            var result = localStorageService.get(FINISHED);
-            
-            return (result && result === true);
-        }
-        
-        // Get the library
-        this.getLibrary = function(){
-            // If we have something return it right away
-            if(albumLibrary) return albumLibrary;
-            
-            // If it's null check local storage first
-            if(!albumLibrary && localStorageService.get(LIBRARY)){
-                albumLibrary = localStorageService.get(LIBRARY);
-            }
-            // Return the default
-            else{
-                albumLibrary = {'total': 0, 'albums':[], 'order': 'new'}
-            }
-            
-            return albumLibrary;
-        }
-        
-        this.resetLibrary = function(){
-            var lib = this.getLibrary();
-            
-            lib.total = 0;
-            lib.albums = [];
-            lib.order = 'new';
-        }
-        
-        // Save the library
-        this.saveLibrary = function(){
-            // Store the results
-            localStorageService.set(LIBRARY, albumLibrary);
-        }
-        
         // Go get the albums
         this.getAlbums = function(){
             var size = 307; // Make the number prime
@@ -156,8 +98,6 @@
                 // Go get the albums
                 $http.post(ENDPOINT_URI + 'getFavorites', data, params).then( function(response){
                     var albums = response.data.result;
-                    var albumCache = {};
-                    var lib = this.getLibrary();
                     
                     albumsToAdd = albumsToAdd.concat(albums);
                     
@@ -166,31 +106,12 @@
                         getAlbums.call(this, off + sz, sz);
                     }
                     else{
-                        this.resetLibrary();
-                        
-                        // Look through the incoming albums
-                        albumsToAdd.forEach( function(album){
-                            // Skip the album if we've added it
-                            if(albumCache[sprintf('%s|%s', album.artist.trim(), album.name.trim())]) return;
-                            // If there is no release date it's just one track
-                            if(!album.releaseDate) return;
-                            
-                            // Record the album
-                            albumCache[sprintf('%s|%s', album.artist.trim(), album.name.trim())] = true;
-                            lib.albums.push(album);
-                            
-                            // Update the total
-                            lib.total++;
-                        });
-                        
-                        this.saveLibrary();
-                        
-                        localStorageService.set(FINISHED, true);
+                        // Add albums to library
+                        LibraryService.addAlbumsToLibrary(albumsToAdd);
                         
                         // Cache cleanup
                         deferred.resolve();
                     }
-                    
                 }.bind(this), deferred.reject);
             }
             
