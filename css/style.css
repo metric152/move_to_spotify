@@ -33,6 +33,16 @@ h4.detail {
     top: 20px;
 }
 
+#notes .donate {
+    position: absolute;
+    right: 40px;
+    top: 60px;
+}
+
+#notes .fyi{
+    line-height: 1.4em;
+}
+
 #rdio {
     float: left;
 }
@@ -134,7 +144,11 @@ h4.detail {
 
 #spotify{
     float: left;
-    margin-left: 100px;
+    margin-left: 30px;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    padding-right: 20px;
+    padding-left: 20px;
 }
 
 #spotify img.logo{
