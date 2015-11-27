@@ -24,6 +24,13 @@ h4.detail {
     float: left;
     width: 45%;
     margin-left: 10px;
+    position: relative;
+}
+
+#notes .share{
+    position: absolute;
+    right: 40px;
+    top: 20px;
 }
 
 #rdio {
