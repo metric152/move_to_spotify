@@ -10,6 +10,12 @@
         var ENDPOINT_URI = "https://api.spotify.com/";
         
         var TOKEN = 'spotify_token';
+        var CONNECTED = 'spotify_connected';
+        
+        // Check to see if rdio is connected
+        this.isConnected = function(){
+            return localStorageService.get(CONNECTED);
+        }
         
         // Set the raw token
         this.setToken = function(token){
@@ -344,6 +350,9 @@
             $http.post('api.php',{'client': 'spotify', 'task':'token', 'redirectUri': REDIRECT_URI, 'clientId': CLIENT_ID, 'code': code}).then(function(result){
                 // Store the response
                 this.setToken(result.data);
+                
+                // Set connected
+                localStorageService.set(CONNECTED, true);
                 
                 // Resolve the promise
                 deferred.resolve();

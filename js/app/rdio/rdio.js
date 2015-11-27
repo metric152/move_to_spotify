@@ -76,6 +76,7 @@
             this.getAlbumCount = getAlbumCount;
             this.getTrackCount = getTrackCount;
             this.resetLibrary = resetLibrary;
+            this.isConnected = RdioService.isConnected;
             this.setOrder = setOrder;
             this.getOrder = getOrder;
             this.connect = false;

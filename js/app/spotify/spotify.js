@@ -79,6 +79,7 @@
             this.getTrackCount = getTrackCount;
             this.filterNotFound = filterNotFound;
             this.filterNotAdded = filterNotAdded;
+            this.isConnected = SpotifyService.isConnected;
             this.select = select;
             this.connect = false;
             
