@@ -1,9 +1,9 @@
 (function(){
     MoveToSpotify.directive('library', Library);
     
-    Library.$inject = ['$rootScope', LIBRARY_SERVICE, SPOTIFY_SERVICE, NOTIFICATION_SERVICE, '$timeout','$log'];
+    Library.$inject = ['$rootScope', '$window', LIBRARY_SERVICE, SPOTIFY_SERVICE, NOTIFICATION_SERVICE, '$timeout','$log'];
     
-    function Library($rootScope, LibraryService, SpotifyService, NotificationService, $timeout, $log){
+    function Library($rootScope, $window, LibraryService, SpotifyService, NotificationService, $timeout, $log){
         var bLazy = null;
         
         // Listen for the last element to be drawn then run the plugin
@@ -52,6 +52,28 @@
             return sprintf("spotify:search:%s+%s", window.encodeURIComponent(album.artist), window.encodeURIComponent(album.name));
         }
         
+        // Check for a UPC 12 code
+        function checkUPC(album){
+            var result = false;
+            
+            album.upcs.forEach(function(upc){
+                if(!upc) return;
+                if([12].indexOf(upc.length) != -1){
+                    album.upc = upc;
+                    result = true;
+                }
+            });
+            
+            return result;
+        }
+        
+        // Generate a link for the apple album
+        function searchApple(album){
+            return LibraryService.searchApple(album).then(function(uri){
+                $window.open(uri,'_blank');
+            },NotificationService.error);
+        }
+        
         function controller($scope){
             this.save = save;
             this.albums = LibraryService.getLibrary;
@@ -59,6 +81,8 @@
             this.loadArtwork = loadArtwork;
             this.immediateAdd = immediateAdd;
             this.getFilters = LibraryService.getFilters;
+            this.checkUPC = checkUPC;
+            this.searchApple = searchApple;
             
             $rootScope.$on(REFRESH_LIBRARY,loadArtwork);
         }

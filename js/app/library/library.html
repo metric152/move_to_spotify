@@ -10,8 +10,9 @@
         <div class="album-name">{{album.name}}</div>
         <div class="artist">{{album.artist}}</div>
         <div class="app-link" >
-            <a ng-href="{{lib.spotifySearch(album)}}" title="Search Spotify for album"><i class="fa fa-search fa-lg"></i></a>
-            <a ng-if="album.spotifyLink" ng-href="{{album.spotifyLink}}" title="Open in Spotify"><i class="fa fa-external-link fa-lg"></i></a>
+            <a ng-href="{{lib.spotifySearch(album)}}" title="Search Spotify for album"><i class="fa fa-spotify fa-lg"></i></a>
+            <!-- <a ng-if="album.spotifyLink" ng-href="{{album.spotifyLink}}" title="Open in Spotify"><i class="fa fa-external-link fa-lg"></i></a> -->
+            <a href="#" ng-click="lib.searchApple(album)" title="Open in Apple Music"><i class="fa fa-apple fa-lg"></i></a>
         </div>
     </div>
 </div>

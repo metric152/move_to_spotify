@@ -73,6 +73,36 @@
             return albumFilter;
         }
         
+        // Search apple for the album
+        this.searchApple = function(album){
+            var deferred = $q.defer();
+            var data = {
+                'params':{
+                    'callback': 'JSON_CALLBACK',
+                    'media': 'music',
+                    'term': sprintf("%s %s", album.artist, album.name)
+                }
+            };
+            
+            $http.jsonp("https://itunes.apple.com/search", data).then(function(response){
+                if(response.data.resultCount == 0){
+                    deferred.reject('Not found');
+                    return;
+                }
+                // Return the URI of the first result
+                var uri = response.data.results[0].collectionViewUrl + "&app=music";
+                
+                // Update the link with the itunes direct link
+                uri = uri.replace('https:', 'itmss:');
+                
+                deferred.resolve(uri);
+            }.bind(this), function(response){
+                deferred.reject('Not found');
+            });
+            
+            return deferred.promise;
+        }
+        
         // Get the library
         this.getLibrary = function(){
             // If we have something return it right away

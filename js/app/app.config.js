@@ -29,6 +29,6 @@
         });
         
         // Allow angular to open albums in spotify app
-        $compileProvider.aHrefSanitizationWhitelist(/^\s*(spotify):/);
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(spotify|https|itms):/);
     }
 })();
