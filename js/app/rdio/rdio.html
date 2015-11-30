@@ -1,17 +1,17 @@
 <div>
-    <img class="logo" src="images/rdio.jpg" /><br/>
+    <img class="logo" src="images/rdio.jpg" />
+    <h4 class="detail">Albums ({{rdio.getAlbumCount()}}) Tracks ({{rdio.getTrackCount()}})</h4>
+    <hr/>
     <button ng-click="rdio.goToRdio()" ng-if="rdio.connect">Connect to Rdio <i class="fa fa-plug"></i></button>
     <div ng-if="rdio.isConnected()">
         <div>
-            <button ng-click="rdio.getAlbums($event)" ng-bind-html="rdio.btnTxt"></button>
-            <button ng-click="rdio.resetLibrary()">Reset Library <i class="fa fa-history"></i></button>
+            <button ng-click="rdio.getAlbums($event)" ng-bind-html="rdio.btnTxt" title="Get albums from Rdio"></button>
+            <button ng-click="rdio.resetLibrary()">Reset Library <i class="fa fa-history" title="Get your library from Rdio again"></i></button>
         </div>
         <hr/>
         <div>
             Display <label><input type="radio" name="order" ng-click="rdio.setOrder('old')" ng-checked="rdio.getOrder() == 'old'" /> Oldest First</label> <label><input type="radio" name="order" ng-click="rdio.setOrder('new')" ng-checked="rdio.getOrder() == 'new'"/>Newest First</label><br/>
             <small>Determines the order the albums will be sent to Spotify</small>
         </div>
-        <h4 class="detail">Albums ({{rdio.getAlbumCount()}})</h4>
-        <h4 class="detail">Tracks ({{rdio.getTrackCount()}})</h4>
     </div>
 </div>

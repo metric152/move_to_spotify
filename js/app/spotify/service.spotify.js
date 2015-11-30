@@ -11,6 +11,9 @@
         
         var TOKEN = 'spotify_token';
         var CONNECTED = 'spotify_connected';
+        var LIBRARY = 'spotify_library';
+        
+        var spotifyLibrary = null;
         
         // Check to see if rdio is connected
         this.isConnected = function(){
@@ -76,7 +79,7 @@
                 'client_id': CLIENT_ID,
                 'redirect_uri': REDIRECT_URI,
                 'state': 'spotify',
-                'scope': 'user-library-modify playlist-modify-public playlist-modify-private'
+                'scope': 'user-library-modify playlist-modify-public playlist-modify-private user-library-read'
             });
         }
         
@@ -152,6 +155,103 @@
             return result;
         }
         
+        // Get the spotify library
+        this.getLibrary = function(){
+            if(spotifyLibrary) return spotifyLibrary;
+            
+            if(localStorageService.get(LIBRARY)){
+                spotifyLibrary = localStorageService.get(LIBRARY);
+            }
+            else{
+                spotifyLibrary = {'total':0, 'tracks': 0};
+            }
+            
+            return spotifyLibrary;
+        }
+        
+        // Save the library
+        this.saveLibrary = function(){
+            localStorageService.set(LIBRARY, spotifyLibrary);
+        }
+        
+        // Reset the library
+        this.resetLibrary = function(){
+            var lib = this.getLibrary();
+            
+            lib = {
+                'total': 0,
+                'tracks': 0
+            };
+        }
+        
+        // Get library from spotify
+        this.getAlbums = function(){
+            var deferred = $q.defer();
+            
+            this.checkAccessToken().then(function(){
+                var sLib = this.getLibrary();
+                var limit = 50;
+                var offset = 0;
+                var lib = LibraryService.getLibrary();
+                
+                // Clear the library
+                this.resetLibrary();
+                
+                function getLib(){
+                    var params = {
+                        'params': {
+                            'limit': limit,
+                            'offset': offset
+                        },
+                        'headers': this.getAuthHeader()
+                    };
+                    
+                    $http.get(ENDPOINT_URI + 'v1/me/albums', params).then(function(response){
+                        // Get the IDs from the response
+                        response.data.items.forEach(function(spotifyAlbum){
+                            sLib[spotifyAlbum.album.id] = {
+                                'tracks': spotifyAlbum.album.tracks.total
+                            };
+                            sLib.total++;
+                            sLib.tracks += spotifyAlbum.album.tracks.total;
+                        });
+                        
+                        // If the next URI exists we're not done yet
+                        if(response.data.next){
+                            offset += limit;
+                            getLib.call(this);
+                        }
+                        else{
+                            // Update our library
+                            lib.albums.forEach(function(album){
+                                if(album.spotifyAlbumId && sLib[album.spotifyAlbumId]){
+                                    album.added = true;
+                                }
+                            });
+                            LibraryService.saveLibrary();
+                            
+                            // Store the key/val match
+                            this.saveLibrary();
+                            
+                            deferred.resolve();
+                        }
+                    }.bind(this), function(response){
+                        deferred.reject("Error getting library");
+                    }.bind(this));
+                }
+                
+                if(lib.total > 0){
+                    getLib.call(this);
+                }
+                else{
+                    deferred.reject("There are no albums to check");
+                }
+                
+            }.bind(this));
+            
+            return deferred.promise;
+        }
+        
         // Save just one album to spotify
         this.saveToSpotify = function(album){
             var deferred = $q.defer();
@@ -164,7 +264,12 @@
                     album.added = true;
                     // Save the changes
                     LibraryService.saveLibrary();
-                    deferred.resolve("Album Saved");
+                    
+                    // Update the library
+                    this.getAlbums().then(function(){
+                        deferred.resolve("Album Saved");
+                    });
+                    
                 }.bind(this), function(response){
                     // We hit the album limit
                     if(response.data.error.message.indexOf("limit exceeded") > -1){
@@ -234,6 +339,7 @@
             var index = 0;
             var throttle = 750;
             var stopSearching = false;
+            var spotifyLibrary = null;
             
             // If we have no library just stop
             if(library.total == 0) {
@@ -297,6 +403,9 @@
                             album.spotifyAlbumId = searchResult.id;
                             album.spotifyLink = searchResult.uri;
                             
+                            // Check to see if the album exists in the library
+                            if(spotifyLibrary[searchResult.id]) album.added = true;
+                            
                             // Update the library
                             LibraryService.saveLibrary();
                         }
@@ -318,7 +427,14 @@
 //                library.albums.forEach(function(album){
 //                    search.call(this, album);
 //                }.bind(this));
-                search.call(this, library.albums[index]);
+                
+                // First get the spotify library
+                this.getAlbums().then(function(){
+                    // Get the library
+                    spotifyLibrary = this.getLibrary();
+                    
+                    search.call(this, library.albums[index]);
+                }.bind(this));
                 
                 
             }.bind(this));
