@@ -70,7 +70,8 @@
         // Generate a link for the apple album
         function searchApple(album){
             return LibraryService.searchApple(album).then(function(uri){
-                $window.open(uri,'_blank');
+                // Navigate to the album without a popup
+                $window.location.href = uri;
             },NotificationService.error);
         }
         

@@ -34,6 +34,13 @@
         // Check to see if the library is available
         this.isLibraryAvaliable = function(){
             var result = localStorageService.get(FINISHED);
+            var lib = this.getLibrary();
+            
+            // Patch to resolve issue with previous users 
+            if(!result && lib.total > 0){
+                this.setLibraryAvailability(true);
+                result = true;
+            }
             
             return (result && result === true);
         }

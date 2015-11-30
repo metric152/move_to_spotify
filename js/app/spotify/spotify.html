@@ -13,10 +13,10 @@
         </div>
         <hr/>
         <div>
-            <i class="fa fa-filter"></i><label class="filter"><input type="checkbox" ng-click="spotify.filterNotFound($event)" />Show Only Albums "Not Found"</label>  
+            <label class="filter"><input type="checkbox" ng-click="spotify.filterNotFound($event)" /><i class="fa fa-filter"></i>Show Only Albums "Not Found"</label>  
         </div>
         <div>
-            <i class="fa fa-filter"></i><label class="filter"><input type="checkbox" ng-click="spotify.filterNotAdded($event)"/>Show Only Albums "Not Added Yet"</label>
+            <label class="filter"><input type="checkbox" ng-click="spotify.filterNotAdded($event)"/><i class="fa fa-filter"></i>Show Only Albums "Not Added Yet"</label>
         </div>
         <h4 class="detail" ng-class="{'warn': spotify.warn}">Albums ({{spotify.getAlbumCount()}})</h4>
         <h4 class="detail" ng-class="{'warn': spotify.warn}">Tracks ({{spotify.getTrackCount()}})</h4>

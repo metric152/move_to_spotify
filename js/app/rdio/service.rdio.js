@@ -14,7 +14,14 @@
         
         // Check to see if rdio is connected
         this.isConnected = function(){
-            return localStorageService.get(CONNECTED);
+            var connected = localStorageService.get(CONNECTED);
+            
+            if(!connected && LibraryService.isLibraryAvaliable()){
+                localStorageService.set(CONNECTED, true);
+                connected = true;
+            }
+            
+            return connected;
         }
         
         // Set the raw token
