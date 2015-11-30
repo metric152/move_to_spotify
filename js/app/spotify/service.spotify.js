@@ -315,12 +315,16 @@
                             save.call(this);
                         }
                         else{
-                            deferred.resolve("Albums saved to Spotify");
+                            this.getAlbums().then(function(){
+                                deferred.resolve("Albums saved to Spotify");
+                            });
                         }
                     }.bind(this), function(response){
                         // We hit the album limit
                         if(response.data.error.message.indexOf("limit exceeded") > -1){
-                            deferred.reject('I can\'t add anymore albums. Use the "Not Yet Added" filter to see what was left out.');
+                            this.getAlbums().then(function(){
+                                deferred.reject('I can\'t add anymore albums. Use the "Not Yet Added" filter to see what was left out.');
+                            });
                         }
                     }.bind(this));
                 }
