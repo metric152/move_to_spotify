@@ -3,7 +3,7 @@
     <button ng-click="spotify.goToSpotify()" ng-if="spotify.connect">Connect to Spotify <i class="fa fa-plug"></i></button>
     <span ng-if="spotify.isConnected()">
         <button class="search" ng-click="spotify.searchSpotify($event)" ng-bind-html="spotify.btnTxt"></button>
-        <button class="save" ng-click="spotify.saveToSpotify($event)" ng-bind-html="spotify.saveBtnTxt"></button>
+        
     </span>
     <div ng-if="spotify.isConnected()">
         <hr/>
@@ -18,6 +18,8 @@
         <div>
             <label class="filter"><input type="checkbox" ng-click="spotify.filterNotAdded($event)"/><i class="fa fa-filter"></i>Show Only Albums "Not Added Yet"</label>
         </div>
+        <hr/>
+        <button class="save" ng-click="spotify.saveToSpotify($event)" ng-bind-html="spotify.saveBtnTxt"></button>
         <h4 class="detail" ng-class="{'warn': spotify.warn}">Albums ({{spotify.getAlbumCount()}})</h4>
         <h4 class="detail" ng-class="{'warn': spotify.warn}">Tracks ({{spotify.getTrackCount()}})</h4>
     </div>
