@@ -337,6 +337,7 @@
             var deferred = $q.defer();
             var library = LibraryService.getLibrary();
             var index = 0;
+            var found = 0;
             var throttle = 750;
             var stopSearching = false;
             var spotifyLibrary = null;
@@ -396,6 +397,7 @@
 
                         response.data.albums.items.forEach(function(result){
                             if(result.name == album['name']) searchResult = result;
+                            deferred.notify(++found);
                         });
                         
                         // Save the spotify id

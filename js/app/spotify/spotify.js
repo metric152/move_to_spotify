@@ -17,11 +17,14 @@
         
         // Search for albums
         function searchSpotify($event){
+            var searchText = "Found %s ... Please wait <i class='fa fa-spinner fa-pulse'></i>";
             // Update the button
             $event.target.disabled = true;
-            this.btnTxt = "Searching. Please wait <i class='fa fa-spinner fa-pulse'></i>";
+            this.btnTxt = sprintf(searchText, 0);
             
-            SpotifyService.searchForAlbums().then(NotificationService.success, NotificationService.error)['finally']( function(){
+            SpotifyService.searchForAlbums().then(NotificationService.success, NotificationService.error, function(count){
+                this.btnTxt = sprintf(searchText, count);
+            }.bind(this))['finally']( function(){
                 $event.target.disabled = false;
                 this.btnTxt = SEARCH_SPOTIFY;
             }.bind(this));
