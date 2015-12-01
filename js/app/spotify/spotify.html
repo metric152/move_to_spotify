@@ -5,7 +5,7 @@
     <button ng-click="spotify.goToSpotify()" ng-if="spotify.connect">Connect to Spotify <i class="fa fa-plug"></i></button>
     <span ng-if="spotify.isConnected()">
         <button class="search" ng-click="spotify.searchSpotify($event)" ng-bind-html="spotify.btnTxt" title="Search to find matches for your library"></button>
-        <button ng-click="spotify.sync($event)" ng-bind-html="spotify.syncBtnTxt" title="After a search is performed use this to see if anything found is in your library"></button>
+        <!-- <button ng-click="spotify.sync($event)" ng-bind-html="spotify.syncBtnTxt" title="After a search is performed use this to see if anything found is in your library"></button> -->
     </span>
     <div ng-if="spotify.isConnected()">
         <hr/>
