@@ -384,7 +384,7 @@
                     var params = {
                         'params':{
                             'type':'album',
-                            'q': sprintf('album:%s artist:%s year:%s-%s', window.encodeURIComponent(album['name']), window.encodeURIComponent(album['artist']), albumDate - 1, albumDate + 1)
+                            'q': sprintf('album:%s artist:%s year:%s-%s', album['name'].replace('+',''), album['artist'], albumDate - 1, albumDate + 1)
                         },
                         'headers': this.getAuthHeader()
                     };
@@ -426,6 +426,7 @@
                             deferred.reject('Too many searches right now. Try again in a little bit.');
                             stopSearching = true;
                         }
+                        nextAlbum.call(this, false);
                     }.bind(this));
                 };
                 
